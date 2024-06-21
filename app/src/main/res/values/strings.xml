@@ -11,7 +11,7 @@
     <string name="delete">Удалить</string>
     <string name="completed_todo_text">Выполнено - %1$d</string>
     <string name="new_todo">Новое</string>
-    <string name="toast_write_something">Новое</string>
+    <string name="toast_write_something">Напишите что-нибудь</string>
 
 
     <string-array name="importance_array">
