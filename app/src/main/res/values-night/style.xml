@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style
+        name="Text">
+    </style>
+
+    <style name="ExpandedTitleTextAppearance">
+        <item name="android:textSize">32sp</item>
+        <item name="android:layout_marginStart">60dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+    <style name="CollapsedTitleTextAppearance">
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_marginStart">16dp</item>
+    </style>
+
+
+    <style name="Text.Subhead">
+        <item name="android:textSize">14sp</item>
+        <item name="android:color">@color/white</item>
+    </style>
+
+
+    <style name="Text.Body">
+        <item name="android:textSize">16sp</item>
+        <item name="android:color">@color/white</item>
+    </style>
+
+
+    <style name="Text.Button">
+        <item name="android:textSize">14sp</item>
+        <item name="android:color">@color/white</item>
+    </style>
+
+
+    <style name="Text.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:color">@color/white</item>
+    </style>
+
+
+    <style name="Text.Large">
+        <item name="android:textSize">32sp</item>
+        <item name="android:color">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+    <style name="DatePicker" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="colorAccent">@color/blue</item>
+        <item name="android:textColor">@color/blue</item>
+
+        <item name="android:buttonBarPositiveButtonStyle">@style/DialogButtonStyled</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DialogButtonStyled</item>
+        <item name="android:buttonBarNeutralButtonStyle">@style/DialogButtonStyled</item>
+    </style>
+
+    <style name="DialogButtonStyled" parent="Theme.MaterialComponents.Light">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+
+    <style name="DialogButton.Blue" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+
+    <style name="CustomCheckBox" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorControlActivated">@color/green</item>
+    </style>
+</resources>

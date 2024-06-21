@@ -1,0 +1,30 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.ToDoYa" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorSecondary</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondaryVariant">@color/colorSecondary</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+
+        <!-- Accent color for buttons and other elements. -->
+        <item name="colorAccent">@color/blue</item>
+
+        <!-- Text color for icons (assuming it's the same as colorOnPrimary or colorOnSecondary). -->
+        <item name="android:textColor">@color/iconColor</item>
+
+        <!-- Background and app bar color -->
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:colorBackground">@color/colorPrimary</item>
+
+
+        <!-- Apply CustomCheckBox style globally -->
+        <item name="checkboxStyle">@style/CustomCheckBox</item>
+    </style>
+</resources>
