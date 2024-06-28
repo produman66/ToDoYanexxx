@@ -1,6 +1,6 @@
 package com.example.todoya.view.adapter
 
-import com.example.todoya.data.room.TodoItem
+import com.example.todoya.data.entity.TodoItem
 
 
 interface OnClickListener {

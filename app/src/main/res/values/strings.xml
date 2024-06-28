@@ -12,6 +12,15 @@
     <string name="completed_todo_text">Выполнено - %1$d</string>
     <string name="new_todo">Новое</string>
     <string name="toast_write_something">Напишите что-нибудь</string>
+    <string name="add_task">Добавить задачу</string>
+    <string name="visibility">Показать</string>
+    <string name="visibility_off">Скрыть</string>
+    <string name="back">Назад</string>
+    <string name="cancel">Отмена</string>
+    <string name="ok">Готово</string>
+    <string name="NO">Нет</string>
+    <string name="LOW">Низкий</string>
+    <string name="HIGH">Высокий</string>
 
 
     <string-array name="importance_array">
@@ -19,5 +28,29 @@
     <item>Низкий</item>
     <item>!!Высокий</item>
   </string-array>
+
+
+
+
+
+//Удалить потом
+  <string name="attention">Attention</string>
+  <string name="back_button">Back</string>
+  <string name="delete_question">Are you sure you want to delete?</string>
+  <string name="no_item_description">Нет элементов</string>
+  <string name="edit_item_title">Edit Item</string>
+  <string name="item">Item</string>
+  <string name="item_detail_title">Item Details</string>
+  <string name="item_entry_title">Add Item</string>
+  <string name="item_name_req">Item Name*</string>
+  <string name="item_price_req">Item Price*</string>
+  <string name="no">No</string>
+  <string name="price">Price</string>
+  <string name="quantity_in_stock">Quantity in stock</string>
+  <string name="quantity_req">Quantity in Stock*</string>
+  <string name="save_action">Save</string>
+  <string name="sell">Sell</string>
+  <string name="yes">Yes</string>
+  <string name="required_fields">Заполните текст</string>
 
 </resources>

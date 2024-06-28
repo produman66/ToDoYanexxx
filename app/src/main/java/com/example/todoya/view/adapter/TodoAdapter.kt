@@ -9,8 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoya.R
-import com.example.todoya.data.room.Importance
-import com.example.todoya.data.room.TodoItem
+import com.example.todoya.data.entity.Importance
+import com.example.todoya.data.entity.TodoItem
 import com.example.todoya.databinding.TodoItemBinding
 import java.text.SimpleDateFormat
 import java.util.Date
