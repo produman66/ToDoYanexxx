@@ -1,4 +1,4 @@
-package com.example.todoya
+package com.example.todoya.view
 
 import java.text.SimpleDateFormat
 import java.util.Date

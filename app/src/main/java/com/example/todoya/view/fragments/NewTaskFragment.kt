@@ -12,17 +12,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.example.todoya.MainActivity
 import com.example.todoya.R
-import com.example.todoya.Utils
-import com.example.todoya.data.room.Importance
-import com.example.todoya.data.room.TodoItem
+import com.example.todoya.view.Utils
+import com.example.todoya.data.entity.Importance
+import com.example.todoya.data.entity.TodoItem
 import com.example.todoya.databinding.FragmentNewTaskBinding
-import com.example.todoya.viewmodel.TodoViewModel
-import com.example.todoya.viewmodel.TodoViewModelFactory
-import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -33,9 +28,9 @@ class NewTaskFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var _binding: FragmentNewTaskBinding? = null
     private val bindingNT get() = _binding!!
 
-    private val todoViewModel: TodoViewModel by viewModels {
-        TodoViewModelFactory((requireActivity() as MainActivity).repository)
-    }
+//    private val todoViewModel: TodoViewModel by viewModels {
+//        TodoViewModelFactory((requireActivity() as MainActivity).repository)
+//    }
 
     private var todoId = ""
     private var selectedDeadline: Date? = null
@@ -102,9 +97,9 @@ class NewTaskFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 
     private fun loadTodoItem() {
-        todoViewModel.getTodoById(todoId).observe(viewLifecycleOwner) { todoItem ->
-            todoItem?.let { populateFields(it) }
-        }
+//        todoViewModel.getTodoById(todoId).observe(viewLifecycleOwner) { todoItem ->
+//            todoItem?.let { populateFields(it) }
+//        }
     }
 
 
@@ -124,10 +119,10 @@ class NewTaskFragment : Fragment(), AdapterView.OnItemSelectedListener {
         bindingNT.deleteImg.setColorFilter(color)
         bindingNT.deleteTxt.setTextColor(color)
 
-        bindingNT.deleteTodo.setOnClickListener {
-            todoViewModel.deleteTodoById(todoId)
-            findNavController().popBackStack()
-        }
+//        bindingNT.deleteTodo.setOnClickListener {
+//            todoViewModel.deleteTodoById(todoId)
+//            findNavController().popBackStack()
+//        }
     }
 
 
@@ -154,7 +149,7 @@ class NewTaskFragment : Fragment(), AdapterView.OnItemSelectedListener {
             modifiedAt = null
         )
 
-        todoViewModel.insert(newTodo)
+//        todoViewModel.insert(newTodo)
         findNavController().popBackStack()
     }
 

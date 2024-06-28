@@ -1,25 +1,18 @@
 package com.example.todoya.view.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.todoya.MainActivity
 import com.example.todoya.R
 import com.example.todoya.view.adapter.OnClickListener
 import com.example.todoya.view.adapter.TodoAdapter
-import com.example.todoya.data.room.TodoItem
+import com.example.todoya.data.entity.TodoItem
 import com.example.todoya.databinding.FragmentMainScreenBinding
-import com.example.todoya.viewmodel.TodoViewModel
-import com.example.todoya.viewmodel.TodoViewModelFactory
 import com.google.android.material.appbar.AppBarLayout
 
 
@@ -29,14 +22,14 @@ class MainScreenFragment : Fragment() {
     private val bindingMS get() = _binding!!
 
     private val todoAdapter = TodoAdapter()
-    private val todoViewModel: TodoViewModel by viewModels {
-        TodoViewModelFactory((requireActivity() as MainActivity).repository)
-    }
+//    private val todoViewModel: TodoViewModel by viewModels {
+//        TodoViewModelFactory((requireActivity() as MainActivity).repository)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        Log.d("MainFragment", "${todoViewModel.isEyeClosed}")
+//        Log.d("MainFragment", "${todoViewModel.isEyeClosed}")
         _binding = FragmentMainScreenBinding.inflate(inflater, container, false)
         return bindingMS.root
     }
@@ -61,7 +54,7 @@ class MainScreenFragment : Fragment() {
 
             override fun onClickCheckBox(position: Int, model: TodoItem) {
                 val id = model.id
-                todoViewModel.toggleCompletedById(id)
+//                todoViewModel.toggleCompletedById(id)
                 observeCompletedCount()
             }
 
@@ -137,53 +130,53 @@ class MainScreenFragment : Fragment() {
 
 
     private fun toggleEyeState() {
-        todoViewModel.isEyeClosed = !todoViewModel.isEyeClosed
+//        todoViewModel.isEyeClosed = !todoViewModel.isEyeClosed
         updateTodoList()
     }
 
 
     private fun observeViewModel() {
-        todoViewModel.allTodo.observe(viewLifecycleOwner, Observer { todo ->
-            if (todoViewModel.isEyeClosed) {
-                todo?.let { todoAdapter.setTodoList(it) }
-            }
-        })
+//        todoViewModel.allTodo.observe(viewLifecycleOwner, Observer { todo ->
+//            if (todoViewModel.isEyeClosed) {
+//                todo?.let { todoAdapter.setTodoList(it) }
+//            }
+//        })
 
-        todoViewModel.todoIncomplete.observe(viewLifecycleOwner, Observer { todo ->
-            if (!todoViewModel.isEyeClosed) {
-                todo?.let { todoAdapter.setTodoList(it) }
-            }
-        })
+//        todoViewModel.todoIncomplete.observe(viewLifecycleOwner, Observer { todo ->
+//            if (!todoViewModel.isEyeClosed) {
+//                todo?.let { todoAdapter.setTodoList(it) }
+//            }
+//        })
     }
 
 
     private fun updateTodoList() {
-        if (todoViewModel.isEyeClosed) {
-            bindingMS.eyeTodo.setImageResource(R.drawable.visibility_off)
-            bindingMS.eyeToolbar.setImageResource(R.drawable.visibility_off)
-            todoViewModel.allTodo.value?.let { todoAdapter.setTodoList(it) }
-        } else {
-            bindingMS.eyeTodo.setImageResource(R.drawable.visibility)
-            bindingMS.eyeToolbar.setImageResource(R.drawable.visibility)
-            todoViewModel.todoIncomplete.value?.let { todoAdapter.setTodoList(it) }
-        }
+//        if (todoViewModel.isEyeClosed) {
+//            bindingMS.eyeTodo.setImageResource(R.drawable.visibility_off)
+//            bindingMS.eyeToolbar.setImageResource(R.drawable.visibility_off)
+//            todoViewModel.allTodo.value?.let { todoAdapter.setTodoList(it) }
+//        } else {
+//            bindingMS.eyeTodo.setImageResource(R.drawable.visibility)
+//            bindingMS.eyeToolbar.setImageResource(R.drawable.visibility)
+//            todoViewModel.todoIncomplete.value?.let { todoAdapter.setTodoList(it) }
+//        }
     }
 
 
     private fun observeCompletedCount() {
-        todoViewModel.getCompletedTodoCount().observe(viewLifecycleOwner) { count ->
-            bindingMS.completedTodo.text = getString(R.string.completed_todo_text, count)
-        }
+//        todoViewModel.getCompletedTodoCount().observe(viewLifecycleOwner) { count ->
+//            bindingMS.completedTodo.text = getString(R.string.completed_todo_text, count)
+//        }
     }
 
 
     private fun setupCorrectEye() {
-        if (todoViewModel.isEyeClosed) {
-            bindingMS.eyeTodo.setImageResource(R.drawable.visibility_off)
-            bindingMS.eyeToolbar.setImageResource(R.drawable.visibility_off)
-        } else {
-            bindingMS.eyeTodo.setImageResource(R.drawable.visibility)
-            bindingMS.eyeToolbar.setImageResource(R.drawable.visibility)
-        }
+//        if (todoViewModel.isEyeClosed) {
+//            bindingMS.eyeTodo.setImageResource(R.drawable.visibility_off)
+//            bindingMS.eyeToolbar.setImageResource(R.drawable.visibility_off)
+//        } else {
+//            bindingMS.eyeTodo.setImageResource(R.drawable.visibility)
+//            bindingMS.eyeToolbar.setImageResource(R.drawable.visibility)
+//        }
     }
 }

@@ -1,7 +1,7 @@
 package com.example.todoya.view.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.todoya.data.room.TodoItem
+import com.example.todoya.data.entity.TodoItem
 
 class TodoDiffCallback(
     private val oldList: List<TodoItem>,
