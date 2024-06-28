@@ -34,7 +34,7 @@ abstract class TodoRoomDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     TodoRoomDatabase::class.java,
-                    "todo_database10"
+                    "todo_database12"
                 )
                     .addCallback(TodoDatabaseCallback(scope))
                     .build()
@@ -95,7 +95,7 @@ abstract class TodoRoomDatabase : RoomDatabase() {
                 id = "4",
                 text = "Call John",
                 importance = Importance.LOW,
-                deadline = Date(System.currentTimeMillis()+ 172800000),
+                deadline = Date(System.currentTimeMillis() + 172800000),
                 isCompleted = false,
                 createdAt = Date(),
                 modifiedAt = null
@@ -161,6 +161,28 @@ abstract class TodoRoomDatabase : RoomDatabase() {
                 id = "10",
                 text = "Send email to client",
                 importance = Importance.NO,
+                deadline = null,
+                isCompleted = false,
+                createdAt = Date(),
+                modifiedAt = null
+            )
+            todoDao.insert(todo)
+
+            todo = TodoItem(
+                id = "11",
+                text = "Хорошего дня",
+                importance = Importance.HIGH,
+                deadline = null,
+                isCompleted = false,
+                createdAt = Date(),
+                modifiedAt = null
+            )
+            todoDao.insert(todo)
+
+            todo = TodoItem(
+                id = "12",
+                text = "Погулять с собокай",
+                importance = Importance.HIGH,
                 deadline = null,
                 isCompleted = false,
                 createdAt = Date(),

@@ -26,15 +26,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
@@ -62,37 +65,49 @@ import java.util.Date
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun HomeScreen(
-        todoViewModel: TodoViewModel,
-        navController: NavController
-    ) {
+@Composable
+fun HomeScreen(
+    todoViewModel: TodoViewModel,
+    navController: NavController
+) {
 
-        val countCompletedTodo by todoViewModel.getCompletedTodoCount().observeAsState()
-        val isEyeClosed by todoViewModel.isEyeClosed.observeAsState()
-        val listState = rememberLazyListState()
+    val countCompletedTodo by todoViewModel.getCompletedTodoCount().observeAsState()
+    val isEyeClosed by todoViewModel.isEyeClosed.observeAsState()
+    val listState = rememberLazyListState()
 
-        val curItemsList: State<List<TodoItem>> = if (isEyeClosed == true) {
-            todoViewModel.allTodo.observeAsState(listOf())
-        } else {
-            todoViewModel.todoIncomplete.observeAsState(listOf())
+    val curItemsList: State<List<TodoItem>> = if (isEyeClosed == true) {
+        todoViewModel.allTodo.observeAsState(listOf())
+    } else {
+        todoViewModel.todoIncomplete.observeAsState(listOf())
+    }
+
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+
+    val error by todoViewModel.error.observeAsState()
+
+    error?.let {
+        LaunchedEffect(it) {
+            snackbarHostState.showSnackbar(it)
         }
+    }
 
-        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-
-        Scaffold(
-            modifier = Modifier
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .background(color = MaterialTheme.colorScheme.primary),
-            topBar = {
-                LibraryTopBar(
-                    scrollBehavior = scrollBehavior,
-                    isCollapsed = scrollBehavior.state.collapsedFraction == 1f,
-                    todoViewModel = todoViewModel,
-                    isEyeClosed = isEyeClosed,
-                    countCompletedTodo = countCompletedTodo
-                )
-            },
+    Scaffold(
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .background(color = MaterialTheme.colorScheme.primary),
+        topBar = {
+            LibraryTopBar(
+                scrollBehavior = scrollBehavior,
+                isCollapsed = scrollBehavior.state.collapsedFraction == 1f,
+                todoViewModel = todoViewModel,
+                isEyeClosed = isEyeClosed,
+                countCompletedTodo = countCompletedTodo
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.tertiary,
@@ -196,7 +211,9 @@ fun LibraryTopBar(
                             if (isEyeClosed == true) R.drawable.visibility_off
                             else R.drawable.visibility
                         ),
-                        contentDescription = if (isEyeClosed == true) stringResource(id = R.string.visibility) else stringResource(id = R.string.visibility_off),
+                        contentDescription = if (isEyeClosed == true) stringResource(id = R.string.visibility) else stringResource(
+                            id = R.string.visibility_off
+                        ),
                         modifier = Modifier
                             .clickable {
                                 todoViewModel.isEyeClosed.value =
@@ -236,7 +253,9 @@ fun LibraryTopBar(
                         if (isEyeClosed == true) R.drawable.visibility_off
                         else R.drawable.visibility
                     ),
-                    contentDescription = if (isEyeClosed == true) stringResource(id = R.string.visibility) else stringResource(id = R.string.visibility_off),
+                    contentDescription = if (isEyeClosed == true) stringResource(id = R.string.visibility) else stringResource(
+                        id = R.string.visibility_off
+                    ),
                     modifier = Modifier
                         .clickable {
                             todoViewModel.isEyeClosed.value =
@@ -278,7 +297,7 @@ fun HomeScreenPreviewLight() {
                     id = "4",
                     text = "Read a book",
                     importance = Importance.NO,
-                    deadline = Date(System.currentTimeMillis()+ 172800000),
+                    deadline = Date(System.currentTimeMillis() + 172800000),
                     isCompleted = false,
                     createdAt = Date(),
                     modifiedAt = null
@@ -288,6 +307,7 @@ fun HomeScreenPreviewLight() {
         override val incompleteTodo: Flow<List<TodoItem>> = allTodo.map { todoList ->
             todoList.filter { !it.isCompleted }
         }
+
         override suspend fun insert(todo: TodoItem) {}
         override suspend fun deleteTodoById(id: String) {}
         override suspend fun toggleCompletedById(id: String) {}
@@ -335,7 +355,7 @@ fun HomeScreenPreviewDark() {
                     id = "4",
                     text = "Read a book",
                     importance = Importance.NO,
-                    deadline = Date(System.currentTimeMillis()+ 172800000),
+                    deadline = Date(System.currentTimeMillis() + 172800000),
                     isCompleted = false,
                     createdAt = Date(),
                     modifiedAt = null
@@ -345,6 +365,7 @@ fun HomeScreenPreviewDark() {
         override val incompleteTodo: Flow<List<TodoItem>> = allTodo.map { todoList ->
             todoList.filter { !it.isCompleted }
         }
+
         override suspend fun insert(todo: TodoItem) {}
         override suspend fun deleteTodoById(id: String) {}
         override suspend fun toggleCompletedById(id: String) {}

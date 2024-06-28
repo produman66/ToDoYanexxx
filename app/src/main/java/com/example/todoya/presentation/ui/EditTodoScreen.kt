@@ -93,6 +93,14 @@ fun EditTodoScreen(
     var selectedOption by remember { mutableStateOf("") }
     val dateDialogState = rememberMaterialDialogState()
 
+    val error by todoViewModel.error.observeAsState()
+
+    error?.let {
+        LaunchedEffect(it) {
+            snackbarHostState.showSnackbar(it)
+        }
+    }
+
     LaunchedEffect(todoItem) {
         text = todoItem?.text ?: ""
         selectedOption = todoItem?.text ?: ""
@@ -117,10 +125,14 @@ fun EditTodoScreen(
         topBar = {
             EditTopBar(
                 onSaveClick = {
-                    if (text.trim().isNotEmpty()){
+                    if (text.trim().isNotEmpty()) {
                         if (todoItem != null) {
                             todoViewModel.insert(
-                                todoItem!!.copy(text = text, importance = mapSelectedOptionToImportance(selectedOption), deadline = pickedDate)
+                                todoItem!!.copy(
+                                    text = text,
+                                    importance = mapSelectedOptionToImportance(selectedOption),
+                                    deadline = pickedDate
+                                )
                             )
                         } else {
                             todoViewModel.insert(
@@ -136,8 +148,7 @@ fun EditTodoScreen(
                             )
                         }
                         navController.popBackStack()
-                    }
-                    else {
+                    } else {
                         scope.launch {
                             snackbarHostState.showSnackbar("Напиши хоть что-то")
                         }
@@ -158,7 +169,7 @@ fun EditTodoScreen(
         ) {
             OutlinedTextField(
                 value = text,
-                onValueChange = { text = it},
+                onValueChange = { text = it },
                 placeholder = {
                     Text(
                         text = stringResource(id = R.string.do_something),
@@ -227,9 +238,12 @@ fun EditTodoScreen(
                             selectedOption = "Высокий"
                             expanded = false
                         },
-                        text = { Text(
-                            stringResource(id = R.string.HIGH),
-                            color = MaterialTheme.colorScheme.error) }
+                        text = {
+                            Text(
+                                stringResource(id = R.string.HIGH),
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
                     )
                 }
             }
@@ -305,8 +319,10 @@ fun EditTodoScreen(
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val iconTintColor = if (itemId != " ") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
-                val textColor = if (itemId != " ") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
+                val iconTintColor =
+                    if (itemId != " ") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
+                val textColor =
+                    if (itemId != " ") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
 
                 Icon(
                     painter = painterResource(id = R.drawable.delete),
@@ -338,7 +354,7 @@ fun EditTodoScreen(
                 negativeButton(
                     text = stringResource(id = R.string.cancel),
                     textStyle = TextStyle(color = MaterialTheme.colorScheme.tertiary)
-                ){
+                ) {
                     if (!deadlineIsSelected) {
                         isChecked = false
                     }
@@ -348,8 +364,10 @@ fun EditTodoScreen(
             datepicker(
                 initialDate = LocalDate.now(),
                 title = DateTimeFormatter
-                    .ofPattern("d MMMM yyyy",
-                        Locale("ru", "RU"))
+                    .ofPattern(
+                        "d MMMM yyyy",
+                        Locale("ru", "RU")
+                    )
                     .format(LocalDate.now()),
                 locale = Locale("ru", "RU"),
                 colors = DatePickerDefaults.colors(
@@ -358,7 +376,7 @@ fun EditTodoScreen(
                 )
             ) {
                 val date = Date.from(it.atStartOfDay(ZoneId.systemDefault()).toInstant())
-                pickedDate= date
+                pickedDate = date
                 isChecked = true
             }
         }
@@ -429,7 +447,6 @@ private fun mapSelectedOptionToImportance(option: String): Importance {
         else -> Importance.NO
     }
 }
-
 
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)

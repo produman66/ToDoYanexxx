@@ -18,8 +18,15 @@ class TodoViewModel(private val repository: ITodoItemsRepository) : ViewModel() 
     val allTodo: LiveData<List<TodoItem>> = repository.allTodo.asLiveData()
     val todoIncomplete: LiveData<List<TodoItem>> = repository.incompleteTodo.asLiveData()
 
+    private val _error = MutableLiveData<String>()
+    val error: LiveData<String> get() = _error
+
     fun insert(todo: TodoItem) = viewModelScope.launch {
-        repository.insert(todo)
+        try {
+            repository.insert(todo)
+        } catch (e: Exception) {
+            _error.value = "Ошибка создания задания: ${e.message}"
+        }
     }
 
     fun getTodoById(id: String): LiveData<TodoItem?> {
@@ -31,15 +38,24 @@ class TodoViewModel(private val repository: ITodoItemsRepository) : ViewModel() 
     }
 
     fun deleteTodoById(id: String) = viewModelScope.launch {
-        repository.deleteTodoById(id)
+        try {
+            repository.deleteTodoById(id)
+        } catch (e: Exception) {
+            _error.value = "Ошибка удаления задания с id $id: ${e.message}"
+        }
     }
 
     fun toggleCompletedById(id: String) = viewModelScope.launch {
-        repository.toggleCompletedById(id)
+        try {
+            repository.toggleCompletedById(id)
+        } catch (e: Exception) {
+            _error.value = "Ошибка изменения статуса задания с id $id: ${e.message}"
+        }
     }
 }
 
-class TodoViewModelFactory(private val repository: TodoItemsRepository) : ViewModelProvider.Factory {
+class TodoViewModelFactory(private val repository: TodoItemsRepository) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TodoViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

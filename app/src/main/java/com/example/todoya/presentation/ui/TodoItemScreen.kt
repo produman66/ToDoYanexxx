@@ -79,16 +79,17 @@ fun TodoItemScreen(
                 .weight(1f)
                 .padding(top = 22.dp, bottom = 22.dp)
         ) {
-            Row (modifier = Modifier
-                .padding(bottom = 4.dp)){
+            Row(
+                modifier = Modifier
+                    .padding(bottom = 4.dp)
+            ) {
                 if (item.importance == Importance.LOW) {
                     Image(
                         painter = painterResource(id = R.drawable.arrow_down),
                         contentDescription = stringResource(id = R.string.importance),
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outlineVariant)
                     )
-                }
-                else if (item.importance == Importance.HIGH){
+                } else if (item.importance == Importance.HIGH) {
                     Image(
                         painter = painterResource(id = R.drawable.importance_high),
                         contentDescription = stringResource(id = R.string.importance),
