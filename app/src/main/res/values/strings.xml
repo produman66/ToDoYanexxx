@@ -20,7 +20,7 @@
     <string name="ok">Готово</string>
     <string name="NO">Нет</string>
     <string name="LOW">Низкий</string>
-    <string name="HIGH">Высокий</string>
+    <string name="HIGH">!!Высокий</string>
 
 
     <string-array name="importance_array">

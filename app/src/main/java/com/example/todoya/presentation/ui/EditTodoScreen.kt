@@ -1,5 +1,6 @@
 package com.example.todoya.presentation.ui
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,20 +45,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.todoya.R
 import com.example.todoya.data.entity.Importance
 import com.example.todoya.data.entity.TodoItem
+import com.example.todoya.domain.repository.ITodoItemsRepository
 import com.example.todoya.presentation.common.CustomDivider
 import com.example.todoya.presentation.viewmodel.TodoViewModel
+import com.example.todoya.ui.theme.TodoYaTheme
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -344,11 +348,13 @@ fun EditTodoScreen(
             datepicker(
                 initialDate = LocalDate.now(),
                 title = DateTimeFormatter
-                    .ofPattern("  yyyy")
+                    .ofPattern("d MMMM yyyy",
+                        Locale("ru", "RU"))
                     .format(LocalDate.now()),
+                locale = Locale("ru", "RU"),
                 colors = DatePickerDefaults.colors(
                     headerBackgroundColor = MaterialTheme.colorScheme.tertiary,
-                    dateActiveBackgroundColor = MaterialTheme.colorScheme.tertiary,
+                    dateActiveBackgroundColor = MaterialTheme.colorScheme.tertiary
                 )
             ) {
                 val date = Date.from(it.atStartOfDay(ZoneId.systemDefault()).toInstant())
@@ -423,4 +429,60 @@ private fun mapSelectedOptionToImportance(option: String): Importance {
         else -> Importance.NO
     }
 }
+
+
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+fun EditTodoScreenPreviewLight() {
+    TodoYaTheme(darkTheme = false) {
+        val fakeTodoViewModel = remember {
+            val fakeRepository = object : ITodoItemsRepository {
+                override val allTodo: Flow<List<TodoItem>> = flowOf(emptyList())
+                override val incompleteTodo: Flow<List<TodoItem>> = flowOf(emptyList())
+                override suspend fun insert(todo: TodoItem) {}
+                override suspend fun deleteTodoById(id: String) {}
+                override suspend fun toggleCompletedById(id: String) {}
+                override fun getTodoById(id: String): Flow<TodoItem?> = flowOf(null)
+                override fun getCompletedTodoCount(): Flow<Int> = flowOf(0)
+            }
+            TodoViewModel(fakeRepository)
+        }
+        val navController = rememberNavController()
+
+        EditTodoScreen(
+            todoViewModel = fakeTodoViewModel,
+            navController = navController,
+            itemId = "1"
+        )
+    }
+}
+
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun EditTodoScreenPreviewDark() {
+    TodoYaTheme(darkTheme = true) {
+        val fakeTodoViewModel = remember {
+            val fakeRepository = object : ITodoItemsRepository {
+                override val allTodo: Flow<List<TodoItem>> = flowOf(emptyList())
+                override val incompleteTodo: Flow<List<TodoItem>> = flowOf(emptyList())
+                override suspend fun insert(todo: TodoItem) {}
+                override suspend fun deleteTodoById(id: String) {}
+                override suspend fun toggleCompletedById(id: String) {}
+                override fun getTodoById(id: String): Flow<TodoItem?> = flowOf(null)
+                override fun getCompletedTodoCount(): Flow<Int> = flowOf(0)
+            }
+            TodoViewModel(fakeRepository)
+        }
+        val navController = rememberNavController()
+
+        EditTodoScreen(
+            todoViewModel = fakeTodoViewModel,
+            navController = navController,
+            itemId = "exampleItemId"
+        )
+    }
+}
+
 

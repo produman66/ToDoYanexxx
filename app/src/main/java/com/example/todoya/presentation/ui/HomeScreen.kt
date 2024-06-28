@@ -1,7 +1,6 @@
 package com.example.todoya.presentation.ui
 
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -27,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -48,12 +48,20 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoya.R
+import com.example.todoya.data.entity.Importance
+import com.example.todoya.data.entity.Importance.*
 import com.example.todoya.data.entity.TodoItem
+import com.example.todoya.domain.repository.ITodoItemsRepository
 import com.example.todoya.presentation.navigation.MainDestinations
 import com.example.todoya.presentation.viewmodel.TodoViewModel
+import com.example.todoya.ui.theme.TodoYaTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import java.util.Date
 
 
-    @OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun HomeScreen(
         todoViewModel: TodoViewModel,
@@ -241,6 +249,119 @@ fun LibraryTopBar(
     }
 }
 
+
+@Preview(showBackground = true, name = "Light Theme")
+@Composable
+fun HomeScreenPreviewLight() {
+    val fakeTodoItemsRepository = object : ITodoItemsRepository {
+        override val allTodo: Flow<List<TodoItem>> = flowOf(
+            listOf(
+                TodoItem(
+                    id = "2",
+                    text = "Read a book",
+                    importance = Importance.LOW,
+                    deadline = null,
+                    isCompleted = false,
+                    createdAt = Date(),
+                    modifiedAt = null
+                ),
+                TodoItem(
+                    id = "3",
+                    text = "Read a book",
+                    importance = Importance.HIGH,
+                    deadline = null,
+                    isCompleted = false,
+                    createdAt = Date(),
+                    modifiedAt = null
+                ),
+                TodoItem(
+                    id = "4",
+                    text = "Read a book",
+                    importance = Importance.NO,
+                    deadline = Date(System.currentTimeMillis()+ 172800000),
+                    isCompleted = false,
+                    createdAt = Date(),
+                    modifiedAt = null
+                )
+            )
+        )
+        override val incompleteTodo: Flow<List<TodoItem>> = allTodo.map { todoList ->
+            todoList.filter { !it.isCompleted }
+        }
+        override suspend fun insert(todo: TodoItem) {}
+        override suspend fun deleteTodoById(id: String) {}
+        override suspend fun toggleCompletedById(id: String) {}
+        override fun getTodoById(id: String): Flow<TodoItem?> = flowOf(null)
+        override fun getCompletedTodoCount(): Flow<Int> = flowOf(1)
+    }
+
+    val fakeTodoViewModel = TodoViewModel(fakeTodoItemsRepository)
+
+    val navController = rememberNavController()
+
+    TodoYaTheme(darkTheme = false) {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            HomeScreen(todoViewModel = fakeTodoViewModel, navController = navController)
+        }
+    }
+}
+
+
+@Preview(showBackground = true, name = "Dark Theme")
+@Composable
+fun HomeScreenPreviewDark() {
+    val fakeTodoItemsRepository = object : ITodoItemsRepository {
+        override val allTodo: Flow<List<TodoItem>> = flowOf(
+            listOf(
+                TodoItem(
+                    id = "2",
+                    text = "Read a book",
+                    importance = Importance.LOW,
+                    deadline = null,
+                    isCompleted = false,
+                    createdAt = Date(),
+                    modifiedAt = null
+                ),
+                TodoItem(
+                    id = "3",
+                    text = "Read a book",
+                    importance = Importance.HIGH,
+                    deadline = null,
+                    isCompleted = false,
+                    createdAt = Date(),
+                    modifiedAt = null
+                ),
+                TodoItem(
+                    id = "4",
+                    text = "Read a book",
+                    importance = Importance.NO,
+                    deadline = Date(System.currentTimeMillis()+ 172800000),
+                    isCompleted = false,
+                    createdAt = Date(),
+                    modifiedAt = null
+                )
+            )
+        )
+        override val incompleteTodo: Flow<List<TodoItem>> = allTodo.map { todoList ->
+            todoList.filter { !it.isCompleted }
+        }
+        override suspend fun insert(todo: TodoItem) {}
+        override suspend fun deleteTodoById(id: String) {}
+        override suspend fun toggleCompletedById(id: String) {}
+        override fun getTodoById(id: String): Flow<TodoItem?> = flowOf(null)
+        override fun getCompletedTodoCount(): Flow<Int> = flowOf(1)
+    }
+
+    val fakeTodoViewModel = TodoViewModel(fakeTodoItemsRepository)
+
+    val navController = rememberNavController()
+
+    TodoYaTheme(darkTheme = true) {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            HomeScreen(todoViewModel = fakeTodoViewModel, navController = navController)
+        }
+    }
+}
 
 
 

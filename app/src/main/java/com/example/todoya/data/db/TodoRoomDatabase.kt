@@ -34,7 +34,7 @@ abstract class TodoRoomDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     TodoRoomDatabase::class.java,
-                    "todo_database5"
+                    "todo_database10"
                 )
                     .addCallback(TodoDatabaseCallback(scope))
                     .build()

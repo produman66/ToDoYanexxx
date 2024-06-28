@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.example.todoya.R
-import com.example.todoya.Utils
+import com.example.todoya.view.Utils
 import com.example.todoya.data.entity.Importance
 import com.example.todoya.data.entity.TodoItem
 import com.example.todoya.databinding.FragmentNewTaskBinding

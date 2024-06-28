@@ -1,6 +1,5 @@
-package com.example.todoya
+package com.example.todoya.view
 
-import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

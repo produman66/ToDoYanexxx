@@ -8,9 +8,10 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.todoya.data.entity.TodoItem
 import com.example.todoya.data.repository.TodoItemsRepository
+import com.example.todoya.domain.repository.ITodoItemsRepository
 import kotlinx.coroutines.launch
 
-class TodoViewModel(private val repository: TodoItemsRepository) : ViewModel() {
+class TodoViewModel(private val repository: ITodoItemsRepository) : ViewModel() {
 
     var isEyeClosed = MutableLiveData(false)
 
