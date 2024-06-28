@@ -2,4 +2,4 @@
 ТГ для связи: @Gudman285
 
 # Загрузка
-Скачать [.apk](https://github.com/produman66/VKApp/releases/tag/FirstRelease) файл на андроид устройство
+Скачать [.apk](https://github.com/produman66/ToDoYanexxx/releases/tag/homework-2) файл на андроид устройство
