@@ -14,31 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoya.presentation.navigation.TodoNavHost
+import com.example.todoya.presentation.ui.ConnectivityObserver
+import com.example.todoya.presentation.ui.NetworkConnectivityObserver
 import com.example.todoya.ui.theme.TodoYaTheme
 import com.example.todoya.presentation.viewmodel.TodoViewModel
 import com.example.todoya.presentation.viewmodel.TodoViewModelFactory
-
-//class MainActivity : AppCompatActivity() {
-//
-//    private var _binding: ActivityMainBinding? = null
-//    private val bindingAM get() = _binding!!
-//
-//    val repository: TodoItemsRepository
-//        get() = (application as TodoApplication).repository
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        _binding = ActivityMainBinding.inflate(layoutInflater)
-//        setContentView(bindingAM.root)
-//
-//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-//    }
-//
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        _binding = null
-//    }
-//}
 
 class MainActivity : ComponentActivity() {
 
@@ -50,7 +30,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
         enableEdgeToEdge()
         setContent {
             TodoYaTheme {

@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,6 +36,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -42,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -51,13 +54,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoya.R
-import com.example.todoya.data.entity.Importance
-import com.example.todoya.data.entity.Importance.*
-import com.example.todoya.data.entity.TodoItem
-import com.example.todoya.domain.repository.ITodoItemsRepository
+import com.example.todoya.data.room.entity.Importance
+import com.example.todoya.data.room.entity.TodoItem
+import com.example.todoya.domain.repository.TodoItemsRepository
 import com.example.todoya.presentation.navigation.MainDestinations
 import com.example.todoya.presentation.viewmodel.TodoViewModel
 import com.example.todoya.ui.theme.TodoYaTheme
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -70,7 +74,7 @@ fun HomeScreen(
     todoViewModel: TodoViewModel,
     navController: NavController
 ) {
-
+    val context = LocalContext.current
     val countCompletedTodo by todoViewModel.getCompletedTodoCount().observeAsState()
     val isEyeClosed by todoViewModel.isEyeClosed.observeAsState()
     val listState = rememberLazyListState()
@@ -86,16 +90,42 @@ fun HomeScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val error by todoViewModel.errorCode.observeAsState()
 
-    val error by todoViewModel.error.observeAsState()
+    LaunchedEffect(error) {
+        error?.let {
+            val message = getErrorMessage(it)
+            snackbarHostState.showSnackbar(message)
+        }
+    }
 
-    error?.let {
-        LaunchedEffect(it) {
-            snackbarHostState.showSnackbar(it)
+    val swipeRefreshState = remember { SwipeRefreshState(false) }
+
+    LaunchedEffect(Unit) {
+        todoViewModel.initializeConnectivityObserver(context)
+    }
+
+    val networkStatus by todoViewModel.networkStatus.collectAsState()
+
+    LaunchedEffect(networkStatus) {
+        val message = getNetworkStatusMessage(networkStatus, todoViewModel)
+        snackbarHostState.showSnackbar(message)
+    }
+
+
+    LaunchedEffect(swipeRefreshState.isRefreshing) {
+        if (swipeRefreshState.isRefreshing) {
+            val message = getNetworkStatusMessage(networkStatus, todoViewModel)
+            snackbarHostState.showSnackbar(message)
+            swipeRefreshState.isRefreshing = false
         }
     }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
             .background(color = MaterialTheme.colorScheme.primary),
@@ -131,29 +161,36 @@ fun HomeScreen(
                 .padding(padding)
                 .background(MaterialTheme.colorScheme.primary)
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .background(MaterialTheme.colorScheme.primary)
-                    .padding(8.dp)
-                    .shadow(4.dp, RoundedCornerShape(8.dp)),
-                state = listState,
-                content = {
-                    items(curItemsList.value, key = { it.id }) { item: TodoItem ->
-                        TodoItemScreen(item = item, onCheckedChange = {
-                            todoViewModel.toggleCompletedById(item.id)
-                        }) {
-                            navController.navigate("${MainDestinations.ITEM_SCREEN}/${item.id}")
-                        }
-                    }
-                    item {
-                        TodoNew {
-                            navController.navigate("${MainDestinations.ITEM_SCREEN}/ ")
-                        }
-                    }
+            SwipeRefresh(
+                state = swipeRefreshState,
+                onRefresh = {
+                    swipeRefreshState.isRefreshing = true
                 }
-            )
+            ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(8.dp)
+                        .shadow(4.dp, RoundedCornerShape(8.dp)),
+                    state = listState,
+                    content = {
+                        items(curItemsList.value, key = { it.id }) { item: TodoItem ->
+                            TodoItemScreen(item = item, onCheckedChange = {
+                                todoViewModel.toggleCompletedById(item.id)
+                            }) {
+                                navController.navigate("${MainDestinations.ITEM_SCREEN}/${item.id}")
+                            }
+                        }
+                        item {
+                            TodoNew {
+                                navController.navigate("${MainDestinations.ITEM_SCREEN}/ ")
+                            }
+                        }
+                    }
+                )
+            }
         }
     }
 }
@@ -272,7 +309,7 @@ fun LibraryTopBar(
 @Preview(showBackground = true, name = "Light Theme")
 @Composable
 fun HomeScreenPreviewLight() {
-    val fakeTodoItemsRepository = object : ITodoItemsRepository {
+    val fakeTodoItemsRepository = object : TodoItemsRepository {
         override val allTodo: Flow<List<TodoItem>> = flowOf(
             listOf(
                 TodoItem(
@@ -282,7 +319,10 @@ fun HomeScreenPreviewLight() {
                     deadline = null,
                     isCompleted = false,
                     createdAt = Date(),
-                    modifiedAt = null
+                    modifiedAt = null,
+                    isSynced = false,
+                    isModified = false,
+                    isDeleted = false
                 ),
                 TodoItem(
                     id = "3",
@@ -291,7 +331,10 @@ fun HomeScreenPreviewLight() {
                     deadline = null,
                     isCompleted = false,
                     createdAt = Date(),
-                    modifiedAt = null
+                    modifiedAt = null,
+                    isSynced = false,
+                    isModified = true,
+                    isDeleted = false
                 ),
                 TodoItem(
                     id = "4",
@@ -300,7 +343,10 @@ fun HomeScreenPreviewLight() {
                     deadline = Date(System.currentTimeMillis() + 172800000),
                     isCompleted = false,
                     createdAt = Date(),
-                    modifiedAt = null
+                    modifiedAt = null,
+                    isSynced = false,
+                    isModified = false,
+                    isDeleted = false
                 )
             )
         )
@@ -311,8 +357,15 @@ fun HomeScreenPreviewLight() {
         override suspend fun insert(todo: TodoItem) {}
         override suspend fun deleteTodoById(id: String) {}
         override suspend fun toggleCompletedById(id: String) {}
-        override fun getTodoById(id: String): Flow<TodoItem?> = flowOf(null)
+        override suspend fun getTodoById(id: String): TodoItem? {
+            return null
+        }
+
         override fun getCompletedTodoCount(): Flow<Int> = flowOf(1)
+        override suspend fun syncWithServer() {}
+        override suspend fun getServerRevision(): Int {
+            return 0
+        }
     }
 
     val fakeTodoViewModel = TodoViewModel(fakeTodoItemsRepository)
@@ -330,7 +383,7 @@ fun HomeScreenPreviewLight() {
 @Preview(showBackground = true, name = "Dark Theme")
 @Composable
 fun HomeScreenPreviewDark() {
-    val fakeTodoItemsRepository = object : ITodoItemsRepository {
+    val fakeTodoItemsRepository = object : TodoItemsRepository {
         override val allTodo: Flow<List<TodoItem>> = flowOf(
             listOf(
                 TodoItem(
@@ -340,7 +393,10 @@ fun HomeScreenPreviewDark() {
                     deadline = null,
                     isCompleted = false,
                     createdAt = Date(),
-                    modifiedAt = null
+                    modifiedAt = null,
+                    isSynced = false,
+                    isModified = false,
+                    isDeleted = false
                 ),
                 TodoItem(
                     id = "3",
@@ -349,7 +405,10 @@ fun HomeScreenPreviewDark() {
                     deadline = null,
                     isCompleted = false,
                     createdAt = Date(),
-                    modifiedAt = null
+                    modifiedAt = null,
+                    isSynced = false,
+                    isModified = false,
+                    isDeleted = false
                 ),
                 TodoItem(
                     id = "4",
@@ -358,7 +417,10 @@ fun HomeScreenPreviewDark() {
                     deadline = Date(System.currentTimeMillis() + 172800000),
                     isCompleted = false,
                     createdAt = Date(),
-                    modifiedAt = null
+                    modifiedAt = null,
+                    isSynced = false,
+                    isModified = false,
+                    isDeleted = false
                 )
             )
         )
@@ -369,8 +431,15 @@ fun HomeScreenPreviewDark() {
         override suspend fun insert(todo: TodoItem) {}
         override suspend fun deleteTodoById(id: String) {}
         override suspend fun toggleCompletedById(id: String) {}
-        override fun getTodoById(id: String): Flow<TodoItem?> = flowOf(null)
+        override suspend fun getTodoById(id: String): TodoItem? {
+            return null
+        }
+
         override fun getCompletedTodoCount(): Flow<Int> = flowOf(1)
+        override suspend fun syncWithServer() {}
+        override suspend fun getServerRevision(): Int {
+            return 0
+        }
     }
 
     val fakeTodoViewModel = TodoViewModel(fakeTodoItemsRepository)
@@ -384,6 +453,36 @@ fun HomeScreenPreviewDark() {
     }
 }
 
+
+fun getErrorMessage(errorCode: Int?): String {
+    return when (errorCode) {
+        1 -> "Элемент не добавлен! Непонятная ошибка"
+        2 -> "Элемент не удален! Непонятная ошибка"
+        3 -> "Стасус элемента не поменялся! Непонятная ошибка"
+        4 -> "Ошибка синхронизации данных с сервером!"
+        5 -> "Не получилось удалить элемент с сервера!"
+        6 -> "Ошибка подключения"
+        7 -> "Ошибка получения данные с сервера!"
+        else -> "Код ошибки: $errorCode"
+    }
+}
+
+
+fun getNetworkStatusMessage(
+    networkStatus: ConnectivityObserver.Status,
+    todoViewModel: TodoViewModel
+): String {
+    return when (networkStatus) {
+        ConnectivityObserver.Status.Available -> {
+            todoViewModel.syncWithServer()
+            "Данные синхронизируются с сервером"
+        }
+
+        ConnectivityObserver.Status.Unavailable -> "Сеть недоступна! Все изменения происходят локально"
+        ConnectivityObserver.Status.Losing -> "Сеть теряет соединение"
+        ConnectivityObserver.Status.Lost -> "Сеть потеряна. Данные сохраняются локально"
+    }
+}
 
 
 

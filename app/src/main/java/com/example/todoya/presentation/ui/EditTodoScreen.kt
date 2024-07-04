@@ -31,6 +31,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -50,9 +51,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoya.R
-import com.example.todoya.data.entity.Importance
-import com.example.todoya.data.entity.TodoItem
-import com.example.todoya.domain.repository.ITodoItemsRepository
+import com.example.todoya.data.room.entity.Importance
+import com.example.todoya.data.room.entity.TodoItem
+import com.example.todoya.domain.repository.TodoItemsRepository
 import com.example.todoya.presentation.common.CustomDivider
 import com.example.todoya.presentation.viewmodel.TodoViewModel
 import com.example.todoya.ui.theme.TodoYaTheme
@@ -69,7 +70,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
-import java.util.Random
+import java.util.UUID
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,9 +84,11 @@ fun EditTodoScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     var expanded by remember { mutableStateOf(false) }
+    LaunchedEffect(itemId) {
+        todoViewModel.getTodoById(itemId)
+    }
 
-    val todoItem by todoViewModel.getTodoById(itemId).observeAsState()
-
+    val todoItem by todoViewModel.selectedTodoItem.collectAsState()
     var text by remember { mutableStateOf("") }
     var isChecked by remember { mutableStateOf(todoItem?.deadline != null) }
     var deadlineIsSelected by remember { mutableStateOf(todoItem?.deadline != null) }
@@ -93,11 +96,36 @@ fun EditTodoScreen(
     var selectedOption by remember { mutableStateOf("") }
     val dateDialogState = rememberMaterialDialogState()
 
-    val error by todoViewModel.error.observeAsState()
+    val error by todoViewModel.errorCode.observeAsState()
 
     error?.let {
         LaunchedEffect(it) {
-            snackbarHostState.showSnackbar(it)
+            var message = ""
+            if (it == 1) {
+                message = "Элемент не добавлен! Непонятная ошибка"
+            }
+            else if(it == 2) {
+                message = "Элемент не удален! Непонятная ошибка"
+            }
+            else if (it == 3){
+                message = "Стасус элемента не поменялся! Непонятная ошибка"
+            }
+            else if (it == 4){
+                message = "Ошибка синхронизации данных с сервером!"
+            }
+            else if (it == 5){
+                message = "Не получилось удалить элемент с сервера!"
+            }
+            else if (it == 6){
+                message = "Ошибка подключения"
+            }
+            else if (it == 7){
+                message = "Ошибка получения данные с сервера!"
+            }
+            else {
+                message = "Код ошибки: $it"
+            }
+            snackbarHostState.showSnackbar(message)
         }
     }
 
@@ -131,19 +159,25 @@ fun EditTodoScreen(
                                 todoItem!!.copy(
                                     text = text,
                                     importance = mapSelectedOptionToImportance(selectedOption),
-                                    deadline = pickedDate
+                                    deadline = pickedDate,
+                                    modifiedAt = Date(System.currentTimeMillis()),
+                                    isSynced = true,
+                                    isModified = false
                                 )
                             )
                         } else {
                             todoViewModel.insert(
                                 TodoItem(
-                                    id = Random().nextLong().toString(),
+                                    id = UUID.randomUUID().toString(),
                                     text = text,
                                     importance = mapSelectedOptionToImportance(selectedOption),
                                     deadline = pickedDate,
                                     isCompleted = false,
                                     createdAt = Date(System.currentTimeMillis()),
-                                    modifiedAt = null
+                                    modifiedAt = Date(System.currentTimeMillis()),
+                                    isSynced = false,
+                                    isModified = false,
+                                    isDeleted = false
                                 )
                             )
                         }
@@ -289,6 +323,9 @@ fun EditTodoScreen(
                         if (isChecked) {
                             dateDialogState.show()
                             deadlineIsSelected = false
+                        } else {
+                            deadlineIsSelected = false
+                            pickedDate = null
                         }
                     },
                     colors = SwitchDefaults.colors(
@@ -454,14 +491,16 @@ private fun mapSelectedOptionToImportance(option: String): Importance {
 fun EditTodoScreenPreviewLight() {
     TodoYaTheme(darkTheme = false) {
         val fakeTodoViewModel = remember {
-            val fakeRepository = object : ITodoItemsRepository {
+            val fakeRepository = object : TodoItemsRepository {
                 override val allTodo: Flow<List<TodoItem>> = flowOf(emptyList())
                 override val incompleteTodo: Flow<List<TodoItem>> = flowOf(emptyList())
                 override suspend fun insert(todo: TodoItem) {}
                 override suspend fun deleteTodoById(id: String) {}
                 override suspend fun toggleCompletedById(id: String) {}
-                override fun getTodoById(id: String): Flow<TodoItem?> = flowOf(null)
+                override suspend fun getTodoById(id: String): TodoItem? { return null }
                 override fun getCompletedTodoCount(): Flow<Int> = flowOf(0)
+                override suspend fun syncWithServer() {}
+                override suspend fun getServerRevision(): Int {return 0}
             }
             TodoViewModel(fakeRepository)
         }
@@ -481,14 +520,16 @@ fun EditTodoScreenPreviewLight() {
 fun EditTodoScreenPreviewDark() {
     TodoYaTheme(darkTheme = true) {
         val fakeTodoViewModel = remember {
-            val fakeRepository = object : ITodoItemsRepository {
+            val fakeRepository = object : TodoItemsRepository {
                 override val allTodo: Flow<List<TodoItem>> = flowOf(emptyList())
                 override val incompleteTodo: Flow<List<TodoItem>> = flowOf(emptyList())
                 override suspend fun insert(todo: TodoItem) {}
                 override suspend fun deleteTodoById(id: String) {}
                 override suspend fun toggleCompletedById(id: String) {}
-                override fun getTodoById(id: String): Flow<TodoItem?> = flowOf(null)
+                override suspend fun getTodoById(id: String): TodoItem? { return null }
                 override fun getCompletedTodoCount(): Flow<Int> = flowOf(0)
+                override suspend fun syncWithServer() {}
+                override suspend fun getServerRevision(): Int {return 0}
             }
             TodoViewModel(fakeRepository)
         }

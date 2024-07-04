@@ -28,9 +28,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todoya.R
-import com.example.todoya.view.Utils
-import com.example.todoya.data.entity.Importance
-import com.example.todoya.data.entity.TodoItem
+import com.example.todoya.Utils
+import com.example.todoya.data.room.entity.Importance
+import com.example.todoya.data.room.entity.TodoItem
 import com.example.todoya.ui.theme.TodoYaTheme
 import java.util.Date
 
@@ -158,7 +158,10 @@ val exampleTodoItem = TodoItem(
     deadline = Date(System.currentTimeMillis() + 172800000),
     isCompleted = false,
     createdAt = Date(),
-    modifiedAt = null
+    modifiedAt = null,
+    isSynced = false,
+    isModified = false,
+    isDeleted = false
 )
 
 @Preview(showBackground = true)

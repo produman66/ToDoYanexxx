@@ -1,4 +1,4 @@
-package com.example.todoya.data.entity
+package com.example.todoya.data.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -15,7 +15,10 @@ data class TodoItem(
     val deadline: Date? = null,
     val isCompleted: Boolean,
     val createdAt: Date,
-    val modifiedAt: Date? = null
+    val modifiedAt: Date? = null,
+    val isSynced: Boolean,
+    val isModified: Boolean,
+    val isDeleted: Boolean
 )
 
 enum class Importance {
