@@ -1,4 +1,4 @@
-package com.example.todoya.data.room
+package com.example.todoya.data.entity
 
 import androidx.room.TypeConverter
 import java.util.Date

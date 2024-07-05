@@ -1,4 +1,4 @@
-package com.example.todoya.data.room
+package com.example.todoya.data.db
 
 import android.content.Context
 import androidx.room.Database
@@ -6,6 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.todoya.data.entity.DateConverter
+import com.example.todoya.data.dao.TodoDao
+import com.example.todoya.data.entity.Importance
+import com.example.todoya.data.entity.TodoItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -30,7 +34,7 @@ abstract class TodoRoomDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     TodoRoomDatabase::class.java,
-                    "todo_database2"
+                    "todo_database12"
                 )
                     .addCallback(TodoDatabaseCallback(scope))
                     .build()
@@ -91,7 +95,7 @@ abstract class TodoRoomDatabase : RoomDatabase() {
                 id = "4",
                 text = "Call John",
                 importance = Importance.LOW,
-                deadline = Date(System.currentTimeMillis()+ 172800000),
+                deadline = Date(System.currentTimeMillis() + 172800000),
                 isCompleted = false,
                 createdAt = Date(),
                 modifiedAt = null
@@ -164,6 +168,27 @@ abstract class TodoRoomDatabase : RoomDatabase() {
             )
             todoDao.insert(todo)
 
+            todo = TodoItem(
+                id = "11",
+                text = "Хорошего дня",
+                importance = Importance.HIGH,
+                deadline = null,
+                isCompleted = false,
+                createdAt = Date(),
+                modifiedAt = null
+            )
+            todoDao.insert(todo)
+
+            todo = TodoItem(
+                id = "12",
+                text = "Погулять с собокай",
+                importance = Importance.HIGH,
+                deadline = null,
+                isCompleted = false,
+                createdAt = Date(),
+                modifiedAt = null
+            )
+            todoDao.insert(todo)
         }
     }
 }
