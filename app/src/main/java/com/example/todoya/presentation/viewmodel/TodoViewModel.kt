@@ -2,15 +2,13 @@ package com.example.todoya.presentation.viewmodel
 
 
 import android.content.Context
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.todoya.data.room.entity.TodoItem
-import com.example.todoya.domain.repository.TodoItemsRepository
-import com.example.todoya.domain.repository.ConnectivityObserver
 import com.example.todoya.domain.manager.NetworkConnectivityObserver
 import com.example.todoya.domain.model.RepositoryException
+import com.example.todoya.domain.repository.ConnectivityObserver
+import com.example.todoya.domain.repository.TodoItemsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,9 +24,6 @@ class TodoViewModel(private val repository: TodoItemsRepository) : ViewModel() {
 
     private val _selectedTodoItem = MutableStateFlow<TodoItem?>(null)
     val selectedTodoItem: StateFlow<TodoItem?> get() = _selectedTodoItem
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> get() = _error
 
     private val _errorCode = MutableStateFlow<Int?>(null)
     val errorCode: StateFlow<Int?> get() = _errorCode
@@ -61,7 +56,6 @@ class TodoViewModel(private val repository: TodoItemsRepository) : ViewModel() {
             try {
                 repository.insert(todo)
             } catch (e: RepositoryException) {
-                _error.value = e.message
                 _errorCode.value = e.code
             }
         }
@@ -73,15 +67,14 @@ class TodoViewModel(private val repository: TodoItemsRepository) : ViewModel() {
             try {
                 _selectedTodoItem.value = repository.getTodoById(id)
             } catch (e: RepositoryException) {
-                _error.value = e.message
                 _errorCode.value = e.code
             }
         }
     }
 
 
-    fun getCompletedTodoCount(): LiveData<Int> {
-        return repository.getCompletedTodoCount().asLiveData()
+    fun getCompletedTodoCount(): Flow<Int> {
+        return repository.getCompletedTodoCount()
     }
 
 
@@ -90,7 +83,6 @@ class TodoViewModel(private val repository: TodoItemsRepository) : ViewModel() {
             try {
                 repository.deleteTodoById(id)
             } catch (e: RepositoryException) {
-                _error.value = e.message
                 _errorCode.value = e.code
             }
         }
@@ -102,7 +94,6 @@ class TodoViewModel(private val repository: TodoItemsRepository) : ViewModel() {
             try {
                 repository.toggleCompletedById(id)
             } catch (e: RepositoryException) {
-                _error.value = e.message
                 _errorCode.value = e.code
             }
         }
@@ -114,7 +105,6 @@ class TodoViewModel(private val repository: TodoItemsRepository) : ViewModel() {
             try {
                 repository.syncWithServer()
             } catch (e: RepositoryException) {
-                _error.value = e.message
                 _errorCode.value = e.code
             }
         }

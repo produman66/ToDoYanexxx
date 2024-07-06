@@ -26,7 +26,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -67,7 +66,8 @@ fun HomeScreen(
     navController: NavController
 ) {
     val context = LocalContext.current
-    val countCompletedTodo by todoViewModel.getCompletedTodoCount().observeAsState()
+    val countCompletedTodo by todoViewModel.getCompletedTodoCount()
+        .collectAsState(initial = 0)
     val isEyeClosed by todoViewModel.isEyeClosed.collectAsState()
     val listState = rememberLazyListState()
 
