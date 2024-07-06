@@ -1,6 +1,5 @@
 package com.example.todoya.presentation.navigation
 
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -11,7 +10,9 @@ import com.example.todoya.presentation.ui.HomeScreen
 import com.example.todoya.presentation.viewmodel.TodoViewModel
 
 
-
+/**
+ * Composable function representing the navigation host for the Todo application.
+ */
 @Composable
 fun TodoNavHost(
     navController: NavHostController,

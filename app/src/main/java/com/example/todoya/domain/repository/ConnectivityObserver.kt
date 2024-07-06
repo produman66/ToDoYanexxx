@@ -1,4 +1,4 @@
-package com.example.todoya.presentation.ui
+package com.example.todoya.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 

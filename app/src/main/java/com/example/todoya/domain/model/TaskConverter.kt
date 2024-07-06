@@ -5,12 +5,16 @@ import com.example.todoya.data.room.entity.TodoItem
 import java.util.Date
 import java.util.UUID
 
+
+/**
+ * Utility object for converting between TodoItem and Task.
+ */
 object TaskConverter {
     fun toTodoItem(task: Task): TodoItem {
         return TodoItem(
             id = task.id,
             text = task.text,
-            importance = when(task.importance) {
+            importance = when (task.importance) {
                 "low" -> Importance.LOW
                 "important" -> Importance.HIGH
                 else -> Importance.NO
@@ -29,7 +33,7 @@ object TaskConverter {
         return Task(
             id = todoItem.id,
             text = todoItem.text,
-            importance = when(todoItem.importance) {
+            importance = when (todoItem.importance) {
                 Importance.LOW -> "low"
                 Importance.HIGH -> "important"
                 else -> "basic"
@@ -38,7 +42,8 @@ object TaskConverter {
             done = todoItem.isCompleted,
             color = "#FFFFFF",
             created_at = todoItem.createdAt.time.div(1000).toInt(),
-            changed_at = todoItem.modifiedAt?.time?.div(1000)?.toInt() ?: todoItem.createdAt.time.div(1000).toInt(),
+            changed_at = todoItem.modifiedAt?.time?.div(1000)?.toInt()
+                ?: todoItem.createdAt.time.div(1000).toInt(),
             last_updated_by = UUID.randomUUID().toString()
         )
     }

@@ -21,6 +21,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        manifestPlaceholders["YANDEX_CLIENT_ID"] = "17ef137909c745f6ab3d1577533adb01"
     }
 
     buildTypes {
@@ -144,5 +145,9 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     implementation(libs.accompanist.swiperefresh)
+
+    implementation(libs.androidx.work.runtime.ktx.v271)
+
+    implementation(libs.authsdk)
 
 }

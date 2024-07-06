@@ -6,6 +6,9 @@ import androidx.room.TypeConverters
 import java.util.Date
 
 
+/**
+ * Entity class representing a TodoItem in the database.
+ */
 @Entity(tableName = "todo_items")
 @TypeConverters(DateConverter::class)
 data class TodoItem(
@@ -21,6 +24,10 @@ data class TodoItem(
     val isDeleted: Boolean
 )
 
+
+/**
+ * Enum class representing the importance levels of a TodoItem.
+ */
 enum class Importance {
     NO,
     LOW,

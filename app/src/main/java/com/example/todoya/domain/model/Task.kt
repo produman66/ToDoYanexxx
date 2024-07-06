@@ -1,6 +1,9 @@
 package com.example.todoya.domain.model
 
 
+/**
+ * Represents a Task data model.
+ */
 data class Task(
     val id: String,
     val text: String,

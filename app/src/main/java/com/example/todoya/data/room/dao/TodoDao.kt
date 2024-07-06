@@ -7,6 +7,10 @@ import androidx.room.Query
 import com.example.todoya.data.room.entity.TodoItem
 import kotlinx.coroutines.flow.Flow
 
+
+/**
+ * Data Access Object (DAO) for managing TodoItem entities in the database.
+ */
 @Dao
 interface TodoDao {
 
@@ -48,6 +52,7 @@ interface TodoDao {
 
     @Query("UPDATE todo_items SET isDeleted = 1 WHERE id = :id")
     suspend fun markTodoAsDeleted(id: String)
+
 
     @Query("UPDATE todo_items SET isModified = 1 WHERE id = :id")
     suspend fun markTodoAsModified(id: String)

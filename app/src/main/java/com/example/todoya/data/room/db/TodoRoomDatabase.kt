@@ -12,6 +12,10 @@ import com.example.todoya.data.room.entity.TodoItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+
+/**
+ * Singleton class representing the Room database for the Todo application.
+ */
 @Database(entities = [TodoItem::class], version = 1)
 @TypeConverters(DateConverter::class)
 abstract class TodoRoomDatabase : RoomDatabase() {
@@ -32,7 +36,7 @@ abstract class TodoRoomDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     TodoRoomDatabase::class.java,
-                    "todo_database61"
+                    "todo_database66"
                 )
                     .addCallback(TodoDatabaseCallback(scope))
                     .build()
@@ -57,135 +61,18 @@ abstract class TodoRoomDatabase : RoomDatabase() {
 
         suspend fun populateDatabase(todoDao: TodoDao) {
 //            var todo = TodoItem(
-//                id = UUID.randomUUID().toString(),
+//                id = "7ec71b48-4346-4cad-9659-897b7e1c8da3",
 //                text = "Meditate for 10 minutes",
 //                importance = Importance.HIGH,
 //                deadline = null,
 //                isCompleted = false,
 //                createdAt = Date(),
 //                modifiedAt = Date(),
-//                isSynced = false,
+//                isSynced = true,
+//                isModified = true,
 //                isDeleted = false
 //            )
 //            todoDao.insert(todo)
-//
-//            todo = TodoItem(
-//                id = UUID.randomUUID().toString(),
-//                text = "Walk the dog",
-//                importance = Importance.LOW,
-//                deadline = null,
-//                isCompleted = true,
-//                createdAt = Date(),
-//                modifiedAt = Date(),
-//                isSynced = false,
-//                isDeleted = false
-//            )
-//            todoDao.insert(todo)
-//
-//            todo = TodoItem(
-//                id = UUID.randomUUID().toString(),
-//                text = "Buy groceries",
-//                importance = Importance.NO,
-//                deadline = Date(System.currentTimeMillis() + 86400000), // 1 day from now
-//                isCompleted = false,
-//                createdAt = Date(),
-//                modifiedAt = Date(),
-//                isSynced = false,
-//                isDeleted = false
-//            )
-//            todoDao.insert(todo)
-//
-//            todo = TodoItem(
-//                id = UUID.randomUUID().toString(),
-//                text = "Call mom",
-//                importance = Importance.HIGH,
-//                deadline = Date(System.currentTimeMillis() + 604800000), // 7 days from now
-//                isCompleted = false,
-//                createdAt = Date(),
-//                modifiedAt = Date(),
-//                isSynced = false,
-//                isDeleted = false
-//            )
-//            todoDao.insert(todo)
-//
-//            todo = TodoItem(
-//                id = UUID.randomUUID().toString(),
-//                text = "Submit tax documents",
-//                importance = Importance.HIGH,
-//                deadline = null,
-//                isCompleted = true,
-//                createdAt = Date(),
-//                modifiedAt = Date(),
-//                isSynced = false,
-//                isDeleted = false // Marked as deleted
-//            )
-//            todoDao.insert(todo)
-//
-//            todo = TodoItem(
-//                id = UUID.randomUUID().toString(),
-//                text = "Finish reading book",
-//                importance = Importance.LOW,
-//                deadline = null,
-//                isCompleted = false,
-//                createdAt = Date(),
-//                modifiedAt = Date(),
-//                isSynced = false,
-//                isDeleted = false
-//            )
-//            todoDao.insert(todo)
-//
-//            todo = TodoItem(
-//                id = UUID.randomUUID().toString(),
-//                text = "Prepare presentation",
-//                importance = Importance.NO,
-//                deadline = Date(System.currentTimeMillis() + 2592000000), // 30 days from now
-//                isCompleted = false,
-//                createdAt = Date(),
-//                modifiedAt = Date(),
-//                isSynced = false,
-//                isDeleted = false
-//            )
-//            todoDao.insert(todo)
-//
-//            todo = TodoItem(
-//                id = UUID.randomUUID().toString(),
-//                text = "Clean the house",
-//                importance = Importance.LOW,
-//                deadline = Date(System.currentTimeMillis() + 172800000), // 2 days from now
-//                isCompleted = true,
-//                createdAt = Date(),
-//                modifiedAt = Date(),
-//                isSynced = false,
-//                isDeleted = false
-//            )
-//            todoDao.insert(todo)
-//
-//            todo = TodoItem(
-//                id = UUID.randomUUID().toString(),
-//                text = "Workout for 30 minutes",
-//                importance = Importance.HIGH,
-//                deadline = null,
-//                isCompleted = false,
-//                createdAt = Date(),
-//                modifiedAt = Date(),
-//                isSynced = false,
-//                isDeleted = false
-//            )
-//            todoDao.insert(todo)
-//
-//            todo = TodoItem(
-//                id = UUID.randomUUID().toString(),
-//                text = "Plan vacation",
-//                importance = Importance.NO,
-//                deadline = Date(System.currentTimeMillis() + 1209600000), // 14 days from now
-//                isCompleted = false,
-//                createdAt = Date(),
-//                modifiedAt = Date(),
-//                isSynced = false,
-//                isDeleted = false
-//            )
-//            todoDao.insert(todo)
-
         }
     }
 }

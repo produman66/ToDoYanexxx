@@ -14,7 +14,12 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
+
+/**
+ * Interface defining methods to interact with the Todo API.
+ */
 interface TodoApiService {
+
     @GET("/todo/list")
     fun getTodoList(
         @Header("Authorization") token: String
@@ -59,4 +64,5 @@ interface TodoApiService {
         @Header("X-Last-Known-Revision") revision: Int,
         @Header("Authorization") token: String
     ): Call<Task>
+
 }

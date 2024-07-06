@@ -2,6 +2,7 @@
 accompanistSwiperefresh = "0.19.0"
 agp = "8.5.0"
 appcompat = "1.7.0"
+authsdk = "3.1.0"
 constraintlayout = "2.1.4"
 converterGson = "2.9.0"
 coreTesting = "2.2.0"
@@ -37,6 +38,7 @@ navigationCompose = "2.7.7"
 runtimeLivedata = "1.6.8"
 firebaseCrashlyticsBuildtools = "3.0.2"
 workRuntimeKtx = "2.9.0"
+workRuntimeKtxVersion = "2.7.1"
 
 [libraries]
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefresh" }
@@ -64,6 +66,8 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomCommon" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "roomCommon" }
 androidx-ui-desktop = { module = "androidx.compose.ui:ui-desktop", version.ref = "uiDesktop" }
+androidx-work-runtime-ktx-v271 = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtxVersion" }
+authsdk = { module = "com.yandex.android:authsdk", version.ref = "authsdk" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "converterGson" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }

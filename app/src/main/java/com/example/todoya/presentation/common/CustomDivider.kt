@@ -9,6 +9,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todoya.ui.theme.TodoYaTheme
 
+
+/**
+ * Composable function that draws a custom horizontal divider.
+ */
 @Composable
 fun CustomDivider(modifier: Modifier){
     HorizontalDivider(
@@ -18,6 +22,10 @@ fun CustomDivider(modifier: Modifier){
     )
 }
 
+
+/**
+ * Preview function for the TodoItemScreen.
+ */
 @Preview(showBackground = true)
 @Composable
 fun TodoItemScreenPreview() {
