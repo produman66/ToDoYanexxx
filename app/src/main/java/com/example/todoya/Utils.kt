@@ -1,9 +1,9 @@
 package com.example.todoya
+
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import com.example.todoya.data.room.entity.Importance
 import com.example.todoya.domain.repository.ConnectivityObserver
-import com.example.todoya.presentation.viewmodel.TodoViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -18,7 +18,12 @@ object Utils {
         return dateFormat.format(date)
     }
 
-    fun showErrorSnackbar(errorCode: Int?, snackbarHostState: SnackbarHostState, scope: CoroutineScope, todoViewModel: TodoViewModel) {
+    fun showErrorSnackbar(
+        errorCode: Int?,
+        snackbarHostState: SnackbarHostState,
+        scope: CoroutineScope,
+        onSyncWithServer: () -> Unit
+    ) {
         val message = when (errorCode) {
             1 -> "Элемент не добавлен! Непонятная ошибка"
             2 -> "Элемент не удален! Непонятная ошибка"
@@ -26,7 +31,7 @@ object Utils {
             4 -> "Ошибка синхронизации данных с сервером!"
             5 -> "Не получилось удалить элемент с сервера!"
             6 -> "Ошибка подключения"
-            7 -> "Ошибка получения данные с сервера!"
+            7 -> "Ошибка получения данных с сервера!"
             else -> "Код ошибки: $errorCode"
         }
         scope.launch {
@@ -35,7 +40,10 @@ object Utils {
                 actionLabel = "Повторить"
             )
             when (result) {
-                SnackbarResult.ActionPerformed -> { todoViewModel.syncWithServer() }
+                SnackbarResult.ActionPerformed -> {
+                    onSyncWithServer()
+                }
+
                 SnackbarResult.Dismissed -> {}
             }
         }
@@ -43,11 +51,11 @@ object Utils {
 
     fun getNetworkStatusMessage(
         networkStatus: ConnectivityObserver.Status,
-        todoViewModel: TodoViewModel
+        onSyncWithServer: () -> Unit
     ): String {
         return when (networkStatus) {
             ConnectivityObserver.Status.Available -> {
-                todoViewModel.syncWithServer()
+                onSyncWithServer()
                 "Данные синхронизируются с сервером"
             }
 
@@ -65,5 +73,4 @@ object Utils {
             else -> Importance.NO
         }
     }
-
 }

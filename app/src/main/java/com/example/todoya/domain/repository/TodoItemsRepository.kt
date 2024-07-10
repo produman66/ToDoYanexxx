@@ -27,4 +27,6 @@ interface TodoItemsRepository {
 
     suspend fun getServerRevision():Int
 
+    fun updateAuthToken(token: String)
+
 }

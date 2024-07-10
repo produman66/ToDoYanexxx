@@ -1,11 +1,10 @@
 package com.example.todoya.data.repository
 
-import android.util.Log
 import com.example.todoya.data.retrofit.TodoApiService
 import com.example.todoya.data.room.dao.TodoDao
 import com.example.todoya.data.room.entity.TodoItem
 import com.example.todoya.domain.model.Request
-import com.example.todoya.domain.model.TaskConverter
+import com.example.todoya.data.TaskConverter
 import com.example.todoya.domain.repository.TodoItemsRepository
 import com.example.todoya.domain.model.RepositoryException
 import kotlinx.coroutines.Dispatchers
@@ -18,13 +17,14 @@ import java.io.IOException
 /**
  * Repository responsible for managing todo items data from local database and remote server.
  */
+
 class TodoItemsRepositoryImpl(
     private val todoDao: TodoDao,
     private val todoApiService: TodoApiService,
     private var token: String
 ) : TodoItemsRepository {
 
-    fun updateAuthToken(token: String) {
+    override fun updateAuthToken(token: String) {
         this.token = token
     }
 

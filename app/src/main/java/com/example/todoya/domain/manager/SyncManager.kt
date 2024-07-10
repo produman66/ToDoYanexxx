@@ -11,7 +11,8 @@ import java.util.concurrent.TimeUnit
  * Manager class responsible for scheduling periodic synchronization work with the server.
  * This class utilizes WorkManager to schedule periodic sync tasks at different intervals.
  */
-class SyncManager(private val context: Context) {
+
+class SyncManager (private val context: Context) {
 
     fun scheduleSyncWork() {
         val syncWorkRequest15Min = PeriodicWorkRequestBuilder<SyncWorker>(15, TimeUnit.MINUTES)

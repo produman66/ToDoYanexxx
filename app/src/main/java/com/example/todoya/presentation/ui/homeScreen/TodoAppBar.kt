@@ -1,4 +1,4 @@
-package com.example.todoya.presentation.ui
+package com.example.todoya.presentation.ui.homeScreen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -26,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.todoya.R
-import com.example.todoya.presentation.viewmodel.TodoViewModel
 
 
 /**
@@ -37,9 +36,9 @@ import com.example.todoya.presentation.viewmodel.TodoViewModel
 fun TodoTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     isCollapsed: Boolean,
-    todoViewModel: TodoViewModel,
-    isEyeClosed: Boolean?,
-    countCompletedTodo: Int?
+    isEyeClosed: Boolean,
+    countCompletedTodo: Int,
+    onEyeToggle: () -> Unit
 ) {
     val elevation = if (isCollapsed) 8.dp else 0.dp
 
@@ -81,16 +80,15 @@ fun TodoTopBar(
                 if (scrollBehavior.state.collapsedFraction > 0.8) {
                     Image(
                         painter = painterResource(
-                            if (isEyeClosed == true) R.drawable.visibility_off
+                            if (isEyeClosed) R.drawable.visibility_off
                             else R.drawable.visibility
                         ),
-                        contentDescription = if (isEyeClosed == true) stringResource(id = R.string.visibility) else stringResource(
+                        contentDescription = if (isEyeClosed) stringResource(id = R.string.visibility) else stringResource(
                             id = R.string.visibility_off
                         ),
                         modifier = Modifier
                             .clickable {
-                                todoViewModel.isEyeClosed.value =
-                                    todoViewModel.isEyeClosed.value.let { !it }
+                                onEyeToggle()
                             }
                             .padding(horizontal = 20.dp),
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.tertiary)
@@ -117,22 +115,21 @@ fun TodoTopBar(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = "Выполнено - ${countCompletedTodo ?: 0}",
+                    text = "Выполнено - ${countCompletedTodo}",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.outlineVariant,
                 )
                 Image(
                     painter = painterResource(
-                        if (isEyeClosed == true) R.drawable.visibility_off
+                        if (isEyeClosed) R.drawable.visibility_off
                         else R.drawable.visibility
                     ),
-                    contentDescription = if (isEyeClosed == true) stringResource(id = R.string.visibility) else stringResource(
+                    contentDescription = if (isEyeClosed) stringResource(id = R.string.visibility) else stringResource(
                         id = R.string.visibility_off
                     ),
                     modifier = Modifier
                         .clickable {
-                            todoViewModel.isEyeClosed.value =
-                                todoViewModel.isEyeClosed.value.let { !it }
+                            onEyeToggle()
                         },
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.tertiary)
                 )

@@ -1,7 +1,8 @@
-package com.example.todoya.domain.model
+package com.example.todoya.data
 
 import com.example.todoya.data.room.entity.Importance
 import com.example.todoya.data.room.entity.TodoItem
+import com.example.todoya.domain.model.Task
 import java.util.Date
 import java.util.UUID
 

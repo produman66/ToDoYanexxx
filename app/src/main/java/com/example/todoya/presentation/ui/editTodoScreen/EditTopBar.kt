@@ -1,4 +1,4 @@
-package com.example.todoya.presentation.ui
+package com.example.todoya.presentation.ui.editTodoScreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,15 +39,11 @@ fun EditTopBar(
                 modifier = Modifier.padding(start = 26.dp)
             )
         },
-
-
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             scrolledContainerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor =
-            MaterialTheme.colorScheme.onBackground
+            titleContentColor = MaterialTheme.colorScheme.onBackground
         ),
-
         navigationIcon = {
             IconButton(onClick = onNavigationClick) {
                 Icon(
@@ -57,7 +53,6 @@ fun EditTopBar(
                 )
             }
         },
-
         actions = {
             Text(
                 text = stringResource(id = R.string.saveButton),
@@ -67,13 +62,10 @@ fun EditTopBar(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(end = 16.dp)
-                    .clickable {
-                        onSaveClick()
-                    },
+                    .clickable(onClick = onSaveClick),
                 color = MaterialTheme.colorScheme.tertiary
             )
         },
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.primary)
+        modifier = Modifier.background(MaterialTheme.colorScheme.primary)
     )
 }

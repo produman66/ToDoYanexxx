@@ -1,5 +1,4 @@
 plugins {
-
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
@@ -66,6 +65,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.common)
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
 
@@ -139,10 +139,11 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-android-compiler:2.48")
     implementation("androidx.fragment:fragment-ktx:1.8.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     //DatePicker
-    implementation("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    implementation(libs.datetime)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.accompanist.swiperefresh)
 

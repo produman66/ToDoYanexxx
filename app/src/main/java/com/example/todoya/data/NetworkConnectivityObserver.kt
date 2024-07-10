@@ -1,4 +1,4 @@
-package com.example.todoya.domain.manager
+package com.example.todoya.data
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
  * This class implements the ConnectivityObserver interface.
  */
 class NetworkConnectivityObserver(
-    private val context: Context
+    val context: Context
 ): ConnectivityObserver {
 
     private val connectivityManager =

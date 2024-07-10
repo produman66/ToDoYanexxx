@@ -6,7 +6,7 @@ import android.content.Context
 /**
  * Manager class for handling authentication token storage in SharedPreferences.
  */
-class AuthTokenManager(private val context: Context) {
+class AuthTokenManager(val context: Context) {
 
     private val sharedPreferences = context.getSharedPreferences("todo_prefs", Context.MODE_PRIVATE)
 

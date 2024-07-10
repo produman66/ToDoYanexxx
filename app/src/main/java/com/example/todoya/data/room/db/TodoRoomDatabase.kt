@@ -28,17 +28,14 @@ abstract class TodoRoomDatabase : RoomDatabase() {
         private var INSTANCE: TodoRoomDatabase? = null
 
         fun getDatabase(
-            context: Context,
-            scope: CoroutineScope
+            context: Context
         ): TodoRoomDatabase {
-
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     TodoRoomDatabase::class.java,
-                    "todo_database66"
+                    "todo_database67"
                 )
-                    .addCallback(TodoDatabaseCallback(scope))
                     .build()
                 INSTANCE = instance
                 instance
@@ -76,3 +73,5 @@ abstract class TodoRoomDatabase : RoomDatabase() {
         }
     }
 }
+
+

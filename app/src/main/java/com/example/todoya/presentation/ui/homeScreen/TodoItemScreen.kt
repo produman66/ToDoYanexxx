@@ -1,4 +1,4 @@
-package com.example.todoya.presentation.ui
+package com.example.todoya.presentation.ui.homeScreen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image

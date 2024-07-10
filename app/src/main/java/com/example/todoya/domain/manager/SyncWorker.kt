@@ -16,7 +16,11 @@ import java.io.IOException
  *
  * This class executes background synchronization tasks using WorkManager.
  */
-class SyncWorker(appContext: Context, workerParams: WorkerParameters): Worker(appContext, workerParams) {
+
+class SyncWorker(
+    appContext: Context,
+    workerParams: WorkerParameters,
+) : Worker(appContext, workerParams) {
 
     override fun doWork(): Result {
         return try {

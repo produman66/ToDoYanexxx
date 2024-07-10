@@ -21,6 +21,13 @@
     <string name="NO">Нет</string>
     <string name="LOW">Низкий</string>
     <string name="HIGH">!!Высокий</string>
+    <string name="Error_1">Элемент не добавлен! Непонятная ошибка</string>
+    <string name="Error_2">Элемент не удален! Непонятная ошибка</string>
+    <string name="Error_3">Стасус элемента не поменялся! Непонятная ошибка</string>
+    <string name="Error_4">Ошибка синхронизации данных с сервером!</string>
+    <string name="Error_5">Не получилось удалить элемент с сервера!</string>
+    <string name="Error_6">Ошибка подключения</string>
+    <string name="Error_7">Ошибка получения данные с сервера!</string>
 
 
     <string-array name="importance_array">

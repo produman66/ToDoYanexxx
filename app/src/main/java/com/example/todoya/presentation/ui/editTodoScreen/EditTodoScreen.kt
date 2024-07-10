@@ -1,4 +1,4 @@
-package com.example.todoya.presentation.ui
+package com.example.todoya.presentation.ui.editTodoScreen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -28,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,17 +48,13 @@ import com.example.todoya.Utils
 import com.example.todoya.Utils.showErrorSnackbar
 import com.example.todoya.data.room.entity.Importance
 import com.example.todoya.data.room.entity.TodoItem
-import com.example.todoya.domain.repository.TodoItemsRepository
 import com.example.todoya.presentation.common.CustomDivider
-import com.example.todoya.presentation.viewmodel.TodoViewModel
 import com.example.todoya.ui.theme.TodoYaTheme
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -76,7 +71,12 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTodoScreen(
-    todoViewModel: TodoViewModel,
+    uiState: EditTodoUiState,
+    onGetTodoById: (String) -> Unit,
+    onInsertTodo: (TodoItem) -> Unit,
+    onDeleteTodoById: (String) -> Unit,
+    onClearError: () -> Unit,
+    onSyncWithServer: () -> Unit,
     navController: NavController,
     itemId: String
 ) {
@@ -84,38 +84,37 @@ fun EditTodoScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     var expanded by remember { mutableStateOf(false) }
-    LaunchedEffect(itemId) {
-        todoViewModel.getTodoById(itemId)
-    }
-
-    val todoItem by todoViewModel.selectedTodoItem.collectAsState()
-    var text by remember { mutableStateOf("") }
-    var isChecked by remember { mutableStateOf(todoItem?.deadline != null) }
-    var deadlineIsSelected by remember { mutableStateOf(todoItem?.deadline != null) }
-    var pickedDate by remember { mutableStateOf(todoItem?.deadline) }
-    var selectedOption by remember { mutableStateOf("") }
     val dateDialogState = rememberMaterialDialogState()
 
-    val error by todoViewModel.errorCode.collectAsState()
+    LaunchedEffect(itemId) {
+        onGetTodoById(itemId)
+    }
 
-    error?.let {
+
+    var text by remember { mutableStateOf("") }
+    var isChecked by remember { mutableStateOf(uiState.selectedTodoItem?.deadline != null) }
+    var deadlineIsSelected by remember { mutableStateOf(uiState.selectedTodoItem?.deadline != null) }
+    var pickedDate by remember { mutableStateOf(uiState.selectedTodoItem?.deadline) }
+    var selectedOption by remember { mutableStateOf("") }
+
+
+    uiState.errorCode?.let {
         LaunchedEffect(it) {
-            showErrorSnackbar(it, snackbarHostState, scope, todoViewModel)
-            todoViewModel.clearError()
+            showErrorSnackbar(it, snackbarHostState, scope, onSyncWithServer)
+            onClearError()
         }
     }
 
-    LaunchedEffect(todoItem) {
-        text = todoItem?.text ?: ""
-        selectedOption = todoItem?.text ?: ""
-        selectedOption = when (todoItem?.importance) {
+    LaunchedEffect(uiState.selectedTodoItem) {
+        text = uiState.selectedTodoItem?.text ?: ""
+        selectedOption = when (uiState.selectedTodoItem?.importance) {
             Importance.LOW -> "Низкий"
             Importance.HIGH -> "Высокий"
             else -> "Нет"
         }
-        isChecked = todoItem?.deadline != null
-        deadlineIsSelected = todoItem?.deadline != null
-        pickedDate = todoItem?.deadline
+        isChecked = uiState.selectedTodoItem?.deadline != null
+        deadlineIsSelected = uiState.selectedTodoItem?.deadline != null
+        pickedDate = uiState.selectedTodoItem?.deadline
     }
 
     Scaffold(
@@ -129,7 +128,7 @@ fun EditTodoScreen(
         topBar = {
             EditTopBar(
                 onSaveClick = {
-                    saveTodoItem(text, todoItem, selectedOption, pickedDate, todoViewModel, navController, scope, snackbarHostState)
+                    saveTodoItem(text, uiState.selectedTodoItem, selectedOption, pickedDate, onInsertTodo, navController, scope, snackbarHostState)
                 },
                 onNavigationClick = {
                     navController.popBackStack()
@@ -284,7 +283,7 @@ fun EditTodoScreen(
 
             CustomDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-            DeleteButtonRow(itemId, todoViewModel, navController)
+            DeleteButtonRow(itemId, onDeleteTodoById, navController)
         }
 
 
@@ -339,14 +338,14 @@ fun saveTodoItem(
     todoItem: TodoItem?,
     selectedOption: String,
     pickedDate: Date?,
-    todoViewModel: TodoViewModel,
+    onInsertTodo: (TodoItem) -> Unit,
     navController: NavController,
     scope: CoroutineScope,
     snackbarHostState: SnackbarHostState
 ) {
     if (text.trim().isNotEmpty()) {
         if (todoItem != null) {
-            todoViewModel.insert(
+            onInsertTodo(
                 todoItem.copy(
                     text = text,
                     importance = Utils.mapSelectedOptionToImportance(selectedOption),
@@ -357,7 +356,7 @@ fun saveTodoItem(
                 )
             )
         } else {
-            todoViewModel.insert(
+            onInsertTodo(
                 TodoItem(
                     id = UUID.randomUUID().toString(),
                     text = text,
@@ -387,16 +386,16 @@ fun saveTodoItem(
 @Composable
 fun DeleteButtonRow(
     itemId: String,
-    todoViewModel: TodoViewModel,
+    onDeleteTodoById: (String) -> Unit,
     navController: NavController
 ) {
     Row(
         modifier = Modifier
             .padding(16.dp)
             .let {
-                if (itemId != " ") {
+                if (itemId.isNotBlank()) {
                     it.clickable {
-                        todoViewModel.deleteTodoById(id = itemId)
+                        onDeleteTodoById(itemId)
                         navController.popBackStack()
                     }
                 } else {
@@ -406,9 +405,9 @@ fun DeleteButtonRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         val iconTintColor =
-            if (itemId != " ") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
+            if (itemId.isNotBlank()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
         val textColor =
-            if (itemId != " ") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
+            if (itemId.isNotBlank()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
 
         Icon(
             painter = painterResource(id = R.drawable.delete),
@@ -427,6 +426,7 @@ fun DeleteButtonRow(
 }
 
 
+
 /**
  * Preview of the edit todo screen in light mode.
  */
@@ -434,71 +434,84 @@ fun DeleteButtonRow(
 @Composable
 fun EditTodoScreenPreviewLight() {
     TodoYaTheme(darkTheme = false) {
-        val fakeTodoViewModel = remember {
-            val fakeRepository = object : TodoItemsRepository {
-                override val allTodo: Flow<List<TodoItem>> = flowOf(emptyList())
-                override val incompleteTodo: Flow<List<TodoItem>> = flowOf(emptyList())
-                override suspend fun insert(todo: TodoItem) {}
-                override suspend fun deleteTodoById(id: String) {}
-                override suspend fun toggleCompletedById(id: String) {}
-                override suspend fun getTodoById(id: String): TodoItem? {
-                    return null
-                }
+        val fakeUiState = EditTodoUiState(
+            selectedTodoItem = TodoItem(
+                id = "1",
+                text = "Sample Todo",
+                importance = Importance.LOW,
+                deadline = Date(),
+                isCompleted = false,
+                createdAt = Date(),
+                modifiedAt = Date(),
+                isSynced = false,
+                isModified = false,
+                isDeleted = false
+            ),
+            errorCode = null
+        )
 
-                override fun getCompletedTodoCount(): Flow<Int> = flowOf(0)
-                override suspend fun syncWithServer() {}
-                override suspend fun getServerRevision(): Int {
-                    return 0
-                }
-            }
-            TodoViewModel(fakeRepository)
-        }
+        val fakeOnGetTodoById: (String) -> Unit = {}
+        val fakeOnInsertTodo: (TodoItem) -> Unit = {}
+        val fakeOnDeleteTodoById: (String) -> Unit = {}
+        val fakeOnClearError: () -> Unit = {}
+        val fakeOnSyncWithServer: () -> Unit = {} // Добавляем фиктивную функцию для синхронизации
+
         val navController = rememberNavController()
 
         EditTodoScreen(
-            todoViewModel = fakeTodoViewModel,
+            uiState = fakeUiState,
+            onGetTodoById = fakeOnGetTodoById,
+            onInsertTodo = fakeOnInsertTodo,
+            onDeleteTodoById = fakeOnDeleteTodoById,
+            onClearError = fakeOnClearError,
+            onSyncWithServer = fakeOnSyncWithServer, // Передаем фиктивную функцию синхронизации
             navController = navController,
             itemId = "1"
         )
     }
 }
 
-
-/**
- * Preview of the edit todo screen in dark mode.
- */
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun EditTodoScreenPreviewDark() {
     TodoYaTheme(darkTheme = true) {
-        val fakeTodoViewModel = remember {
-            val fakeRepository = object : TodoItemsRepository {
-                override val allTodo: Flow<List<TodoItem>> = flowOf(emptyList())
-                override val incompleteTodo: Flow<List<TodoItem>> = flowOf(emptyList())
-                override suspend fun insert(todo: TodoItem) {}
-                override suspend fun deleteTodoById(id: String) {}
-                override suspend fun toggleCompletedById(id: String) {}
-                override suspend fun getTodoById(id: String): TodoItem? {
-                    return null
-                }
+        val fakeUiState = EditTodoUiState(
+            selectedTodoItem = TodoItem(
+                id = "1",
+                text = "Sample Todo",
+                importance = Importance.LOW,
+                deadline = Date(),
+                isCompleted = false,
+                createdAt = Date(),
+                modifiedAt = Date(),
+                isSynced = false,
+                isModified = false,
+                isDeleted = false
+            ),
+            errorCode = null
+        )
 
-                override fun getCompletedTodoCount(): Flow<Int> = flowOf(0)
-                override suspend fun syncWithServer() {}
-                override suspend fun getServerRevision(): Int {
-                    return 0
-                }
-            }
-            TodoViewModel(fakeRepository)
-        }
+        val fakeOnGetTodoById: (String) -> Unit = {}
+        val fakeOnInsertTodo: (TodoItem) -> Unit = {}
+        val fakeOnDeleteTodoById: (String) -> Unit = {}
+        val fakeOnClearError: () -> Unit = {}
+        val fakeOnSyncWithServer: () -> Unit = {} // Добавляем фиктивную функцию для синхронизации
+
         val navController = rememberNavController()
 
         EditTodoScreen(
-            todoViewModel = fakeTodoViewModel,
+            uiState = fakeUiState,
+            onGetTodoById = fakeOnGetTodoById,
+            onInsertTodo = fakeOnInsertTodo,
+            onDeleteTodoById = fakeOnDeleteTodoById,
+            onClearError = fakeOnClearError,
+            onSyncWithServer = fakeOnSyncWithServer,
             navController = navController,
-            itemId = "exampleItemId"
+            itemId = "1"
         )
     }
 }
+
 
 
 
