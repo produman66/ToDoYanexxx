@@ -17,7 +17,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -27,12 +26,10 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,16 +40,16 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoya.R
-import com.example.todoya.data.entity.Importance
-import com.example.todoya.data.entity.TodoItem
-import com.example.todoya.domain.repository.ITodoItemsRepository
+import com.example.todoya.Utils
+import com.example.todoya.Utils.showErrorSnackbar
+import com.example.todoya.data.room.entity.Importance
+import com.example.todoya.data.room.entity.TodoItem
+import com.example.todoya.domain.repository.TodoItemsRepository
 import com.example.todoya.presentation.common.CustomDivider
 import com.example.todoya.presentation.viewmodel.TodoViewModel
 import com.example.todoya.ui.theme.TodoYaTheme
@@ -60,6 +57,7 @@ import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -69,9 +67,12 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
-import java.util.Random
+import java.util.UUID
 
 
+/**
+ * Screen for editing a todo item.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTodoScreen(
@@ -83,9 +84,11 @@ fun EditTodoScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     var expanded by remember { mutableStateOf(false) }
+    LaunchedEffect(itemId) {
+        todoViewModel.getTodoById(itemId)
+    }
 
-    val todoItem by todoViewModel.getTodoById(itemId).observeAsState()
-
+    val todoItem by todoViewModel.selectedTodoItem.collectAsState()
     var text by remember { mutableStateOf("") }
     var isChecked by remember { mutableStateOf(todoItem?.deadline != null) }
     var deadlineIsSelected by remember { mutableStateOf(todoItem?.deadline != null) }
@@ -93,11 +96,12 @@ fun EditTodoScreen(
     var selectedOption by remember { mutableStateOf("") }
     val dateDialogState = rememberMaterialDialogState()
 
-    val error by todoViewModel.error.observeAsState()
+    val error by todoViewModel.errorCode.collectAsState()
 
     error?.let {
         LaunchedEffect(it) {
-            snackbarHostState.showSnackbar(it)
+            showErrorSnackbar(it, snackbarHostState, scope, todoViewModel)
+            todoViewModel.clearError()
         }
     }
 
@@ -125,34 +129,7 @@ fun EditTodoScreen(
         topBar = {
             EditTopBar(
                 onSaveClick = {
-                    if (text.trim().isNotEmpty()) {
-                        if (todoItem != null) {
-                            todoViewModel.insert(
-                                todoItem!!.copy(
-                                    text = text,
-                                    importance = mapSelectedOptionToImportance(selectedOption),
-                                    deadline = pickedDate
-                                )
-                            )
-                        } else {
-                            todoViewModel.insert(
-                                TodoItem(
-                                    id = Random().nextLong().toString(),
-                                    text = text,
-                                    importance = mapSelectedOptionToImportance(selectedOption),
-                                    deadline = pickedDate,
-                                    isCompleted = false,
-                                    createdAt = Date(System.currentTimeMillis()),
-                                    modifiedAt = null
-                                )
-                            )
-                        }
-                        navController.popBackStack()
-                    } else {
-                        scope.launch {
-                            snackbarHostState.showSnackbar("Напиши хоть что-то")
-                        }
-                    }
+                    saveTodoItem(text, todoItem, selectedOption, pickedDate, todoViewModel, navController, scope, snackbarHostState)
                 },
                 onNavigationClick = {
                     navController.popBackStack()
@@ -289,6 +266,9 @@ fun EditTodoScreen(
                         if (isChecked) {
                             dateDialogState.show()
                             deadlineIsSelected = false
+                        } else {
+                            deadlineIsSelected = false
+                            pickedDate = null
                         }
                     },
                     colors = SwitchDefaults.colors(
@@ -304,40 +284,7 @@ fun EditTodoScreen(
 
             CustomDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-            Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .let {
-                        if (itemId != " ") {
-                            it.clickable {
-                                todoViewModel.deleteTodoById(id = itemId)
-                                navController.popBackStack()
-                            }
-                        } else {
-                            it
-                        }
-                    },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val iconTintColor =
-                    if (itemId != " ") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
-                val textColor =
-                    if (itemId != " ") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
-
-                Icon(
-                    painter = painterResource(id = R.drawable.delete),
-                    contentDescription = stringResource(id = R.string.delete),
-                    tint = iconTintColor
-                )
-
-                Text(
-                    text = stringResource(id = R.string.delete),
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = textColor
-                )
-            }
+            DeleteButtonRow(itemId, todoViewModel, navController)
         }
 
 
@@ -383,85 +330,126 @@ fun EditTodoScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun EditTopBar(
-    onSaveClick: () -> Unit,
-    onNavigationClick: () -> Unit
+
+/**
+ * Saves the todo item based on provided data.
+ */
+fun saveTodoItem(
+    text: String,
+    todoItem: TodoItem?,
+    selectedOption: String,
+    pickedDate: Date?,
+    todoViewModel: TodoViewModel,
+    navController: NavController,
+    scope: CoroutineScope,
+    snackbarHostState: SnackbarHostState
 ) {
-    TopAppBar(
-        title = {
-            Text(
-                text = "",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(start = 26.dp)
-            )
-        },
-
-
-        colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            scrolledContainerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor =
-            MaterialTheme.colorScheme.onBackground
-        ),
-
-        navigationIcon = {
-            IconButton(onClick = onNavigationClick) {
-                Icon(
-                    painter = painterResource(id = R.drawable.close),
-                    contentDescription = stringResource(id = R.string.back),
-                    tint = MaterialTheme.colorScheme.onBackground
+    if (text.trim().isNotEmpty()) {
+        if (todoItem != null) {
+            todoViewModel.insert(
+                todoItem.copy(
+                    text = text,
+                    importance = Utils.mapSelectedOptionToImportance(selectedOption),
+                    deadline = pickedDate,
+                    modifiedAt = Date(System.currentTimeMillis()),
+                    isSynced = true,
+                    isModified = false
                 )
-            }
-        },
-
-        actions = {
-            Text(
-                text = stringResource(id = R.string.saveButton),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .clickable {
-                        onSaveClick()
-                    },
-                color = MaterialTheme.colorScheme.tertiary
             )
-        },
-
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.primary)
-    )
-}
-
-
-private fun mapSelectedOptionToImportance(option: String): Importance {
-    return when (option) {
-        "Низкий" -> Importance.LOW
-        "Высокий" -> Importance.HIGH
-        else -> Importance.NO
+        } else {
+            todoViewModel.insert(
+                TodoItem(
+                    id = UUID.randomUUID().toString(),
+                    text = text,
+                    importance = Utils.mapSelectedOptionToImportance(selectedOption),
+                    deadline = pickedDate,
+                    isCompleted = false,
+                    createdAt = Date(System.currentTimeMillis()),
+                    modifiedAt = Date(System.currentTimeMillis()),
+                    isSynced = false,
+                    isModified = false,
+                    isDeleted = false
+                )
+            )
+        }
+        navController.popBackStack()
+    } else {
+        scope.launch {
+            snackbarHostState.showSnackbar("Напиши хоть что-то")
+        }
     }
 }
 
 
+/**
+ * Row with delete button for deleting a todo item.
+ */
+@Composable
+fun DeleteButtonRow(
+    itemId: String,
+    todoViewModel: TodoViewModel,
+    navController: NavController
+) {
+    Row(
+        modifier = Modifier
+            .padding(16.dp)
+            .let {
+                if (itemId != " ") {
+                    it.clickable {
+                        todoViewModel.deleteTodoById(id = itemId)
+                        navController.popBackStack()
+                    }
+                } else {
+                    it
+                }
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val iconTintColor =
+            if (itemId != " ") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
+        val textColor =
+            if (itemId != " ") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
+
+        Icon(
+            painter = painterResource(id = R.drawable.delete),
+            contentDescription = stringResource(id = R.string.delete),
+            tint = iconTintColor
+        )
+
+        Text(
+            text = stringResource(id = R.string.delete),
+            modifier = Modifier
+                .padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.titleMedium,
+            color = textColor
+        )
+    }
+}
+
+
+/**
+ * Preview of the edit todo screen in light mode.
+ */
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun EditTodoScreenPreviewLight() {
     TodoYaTheme(darkTheme = false) {
         val fakeTodoViewModel = remember {
-            val fakeRepository = object : ITodoItemsRepository {
+            val fakeRepository = object : TodoItemsRepository {
                 override val allTodo: Flow<List<TodoItem>> = flowOf(emptyList())
                 override val incompleteTodo: Flow<List<TodoItem>> = flowOf(emptyList())
                 override suspend fun insert(todo: TodoItem) {}
                 override suspend fun deleteTodoById(id: String) {}
                 override suspend fun toggleCompletedById(id: String) {}
-                override fun getTodoById(id: String): Flow<TodoItem?> = flowOf(null)
+                override suspend fun getTodoById(id: String): TodoItem? {
+                    return null
+                }
+
                 override fun getCompletedTodoCount(): Flow<Int> = flowOf(0)
+                override suspend fun syncWithServer() {}
+                override suspend fun getServerRevision(): Int {
+                    return 0
+                }
             }
             TodoViewModel(fakeRepository)
         }
@@ -476,19 +464,29 @@ fun EditTodoScreenPreviewLight() {
 }
 
 
+/**
+ * Preview of the edit todo screen in dark mode.
+ */
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun EditTodoScreenPreviewDark() {
     TodoYaTheme(darkTheme = true) {
         val fakeTodoViewModel = remember {
-            val fakeRepository = object : ITodoItemsRepository {
+            val fakeRepository = object : TodoItemsRepository {
                 override val allTodo: Flow<List<TodoItem>> = flowOf(emptyList())
                 override val incompleteTodo: Flow<List<TodoItem>> = flowOf(emptyList())
                 override suspend fun insert(todo: TodoItem) {}
                 override suspend fun deleteTodoById(id: String) {}
                 override suspend fun toggleCompletedById(id: String) {}
-                override fun getTodoById(id: String): Flow<TodoItem?> = flowOf(null)
+                override suspend fun getTodoById(id: String): TodoItem? {
+                    return null
+                }
+
                 override fun getCompletedTodoCount(): Flow<Int> = flowOf(0)
+                override suspend fun syncWithServer() {}
+                override suspend fun getServerRevision(): Int {
+                    return 0
+                }
             }
             TodoViewModel(fakeRepository)
         }
@@ -501,5 +499,8 @@ fun EditTodoScreenPreviewDark() {
         )
     }
 }
+
+
+
 
 

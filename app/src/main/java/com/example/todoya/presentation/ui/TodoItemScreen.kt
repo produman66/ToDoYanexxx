@@ -28,12 +28,16 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todoya.R
-import com.example.todoya.view.Utils
-import com.example.todoya.data.entity.Importance
-import com.example.todoya.data.entity.TodoItem
+import com.example.todoya.Utils
+import com.example.todoya.data.room.entity.Importance
+import com.example.todoya.data.room.entity.TodoItem
 import com.example.todoya.ui.theme.TodoYaTheme
 import java.util.Date
 
+
+/**
+ * Composable function for displaying a single TodoItem in a list.
+ */
 @Composable
 fun TodoItemScreen(
     item: TodoItem,
@@ -125,6 +129,9 @@ fun TodoItemScreen(
 }
 
 
+/**
+ * Composable function for displaying a "New Todo" button.
+ */
 @Composable
 fun TodoNew(
     onItemClick: () -> Unit
@@ -158,9 +165,16 @@ val exampleTodoItem = TodoItem(
     deadline = Date(System.currentTimeMillis() + 172800000),
     isCompleted = false,
     createdAt = Date(),
-    modifiedAt = null
+    modifiedAt = null,
+    isSynced = false,
+    isModified = false,
+    isDeleted = false
 )
 
+
+/**
+ * Preview function for TodoItemScreen in light theme.
+ */
 @Preview(showBackground = true)
 @Composable
 fun TodoItemScreenPreview() {
@@ -169,6 +183,10 @@ fun TodoItemScreenPreview() {
     }
 }
 
+
+/**
+ * Preview function for TodoItemScreen in dark theme.
+ */
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun TodoItemScreenPreviewDark() {
@@ -177,6 +195,10 @@ fun TodoItemScreenPreviewDark() {
     }
 }
 
+
+/**
+ * Preview function for TodoNew in light theme.
+ */
 @Preview(showBackground = true)
 @Composable
 fun TodoNewPreview() {
@@ -185,6 +207,10 @@ fun TodoNewPreview() {
     }
 }
 
+
+/**
+ * Preview function for TodoNew in dark theme.
+ */
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun TodoNewPreviewDark() {

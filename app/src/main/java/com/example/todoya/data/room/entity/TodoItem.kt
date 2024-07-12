@@ -1,4 +1,4 @@
-package com.example.todoya.data.entity
+package com.example.todoya.data.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -6,6 +6,9 @@ import androidx.room.TypeConverters
 import java.util.Date
 
 
+/**
+ * Entity class representing a TodoItem in the database.
+ */
 @Entity(tableName = "todo_items")
 @TypeConverters(DateConverter::class)
 data class TodoItem(
@@ -15,9 +18,16 @@ data class TodoItem(
     val deadline: Date? = null,
     val isCompleted: Boolean,
     val createdAt: Date,
-    val modifiedAt: Date? = null
+    val modifiedAt: Date? = null,
+    val isSynced: Boolean,
+    val isModified: Boolean,
+    val isDeleted: Boolean
 )
 
+
+/**
+ * Enum class representing the importance levels of a TodoItem.
+ */
 enum class Importance {
     NO,
     LOW,

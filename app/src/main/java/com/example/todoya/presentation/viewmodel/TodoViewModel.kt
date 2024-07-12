@@ -1,66 +1,112 @@
 package com.example.todoya.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+
+import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.todoya.data.entity.TodoItem
-import com.example.todoya.data.repository.TodoItemsRepository
-import com.example.todoya.domain.repository.ITodoItemsRepository
+import com.example.todoya.data.room.entity.TodoItem
+import com.example.todoya.domain.manager.NetworkConnectivityObserver
+import com.example.todoya.domain.model.RepositoryException
+import com.example.todoya.domain.repository.ConnectivityObserver
+import com.example.todoya.domain.repository.TodoItemsRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class TodoViewModel(private val repository: ITodoItemsRepository) : ViewModel() {
+/**
+ * ViewModel responsible for handling business logic related to Todo items.
+ */
+class TodoViewModel(private val repository: TodoItemsRepository) : ViewModel() {
 
-    var isEyeClosed = MutableLiveData(false)
+    private val _networkStatus = MutableStateFlow(ConnectivityObserver.Status.Unavailable)
+    val networkStatus: StateFlow<ConnectivityObserver.Status> get() = _networkStatus
 
-    val allTodo: LiveData<List<TodoItem>> = repository.allTodo.asLiveData()
-    val todoIncomplete: LiveData<List<TodoItem>> = repository.incompleteTodo.asLiveData()
+    private val _selectedTodoItem = MutableStateFlow<TodoItem?>(null)
+    val selectedTodoItem: StateFlow<TodoItem?> get() = _selectedTodoItem
 
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
+    private val _errorCode = MutableStateFlow<Int?>(null)
+    val errorCode: StateFlow<Int?> get() = _errorCode
 
-    fun insert(todo: TodoItem) = viewModelScope.launch {
-        try {
-            repository.insert(todo)
-        } catch (e: Exception) {
-            _error.value = "Ошибка создания задания: ${e.message}"
+    var isEyeClosed = MutableStateFlow(false)
+
+    val allTodo: Flow<List<TodoItem>>
+        get() = repository.allTodo
+
+    val todoIncomplete: Flow<List<TodoItem>>
+        get() = repository.incompleteTodo
+
+    fun clearError() {
+        _errorCode.value = null
+    }
+
+
+    fun initializeConnectivityObserver(context: Context) {
+        val connectivityObserver = NetworkConnectivityObserver(context)
+        viewModelScope.launch {
+            connectivityObserver.observe().collect { status ->
+                _networkStatus.value = status
+            }
         }
     }
 
-    fun getTodoById(id: String): LiveData<TodoItem?> {
-        return repository.getTodoById(id).asLiveData()
-    }
 
-    fun getCompletedTodoCount(): LiveData<Int> {
-        return repository.getCompletedTodoCount().asLiveData()
-    }
-
-    fun deleteTodoById(id: String) = viewModelScope.launch {
-        try {
-            repository.deleteTodoById(id)
-        } catch (e: Exception) {
-            _error.value = "Ошибка удаления задания с id $id: ${e.message}"
+    fun insert(todo: TodoItem) {
+        viewModelScope.launch {
+            try {
+                repository.insert(todo)
+            } catch (e: RepositoryException) {
+                _errorCode.value = e.code
+            }
         }
     }
 
-    fun toggleCompletedById(id: String) = viewModelScope.launch {
-        try {
-            repository.toggleCompletedById(id)
-        } catch (e: Exception) {
-            _error.value = "Ошибка изменения статуса задания с id $id: ${e.message}"
+
+    fun getTodoById(id: String) {
+        viewModelScope.launch {
+            try {
+                _selectedTodoItem.value = repository.getTodoById(id)
+            } catch (e: RepositoryException) {
+                _errorCode.value = e.code
+            }
         }
     }
-}
 
-class TodoViewModelFactory(private val repository: TodoItemsRepository) :
-    ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(TodoViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return TodoViewModel(repository) as T
+
+    fun getCompletedTodoCount(): Flow<Int> {
+        return repository.getCompletedTodoCount()
+    }
+
+
+    fun deleteTodoById(id: String) {
+        viewModelScope.launch {
+            try {
+                repository.deleteTodoById(id)
+            } catch (e: RepositoryException) {
+                _errorCode.value = e.code
+            }
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+
+
+    fun toggleCompletedById(id: String) {
+        viewModelScope.launch {
+            try {
+                repository.toggleCompletedById(id)
+            } catch (e: RepositoryException) {
+                _errorCode.value = e.code
+            }
+        }
+    }
+
+
+    fun syncWithServer() {
+        viewModelScope.launch {
+            try {
+                repository.syncWithServer()
+            } catch (e: RepositoryException) {
+                _errorCode.value = e.code
+            }
+        }
     }
 }

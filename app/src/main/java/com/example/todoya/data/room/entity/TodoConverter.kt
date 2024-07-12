@@ -1,8 +1,12 @@
-package com.example.todoya.data.entity
+package com.example.todoya.data.room.entity
 
 import androidx.room.TypeConverter
 import java.util.Date
 
+
+/**
+ * Type converter for Date objects to Long timestamps and vice versa.
+ */
 class DateConverter {
     @TypeConverter
     fun toDate(timestamp: Long?): Date? {

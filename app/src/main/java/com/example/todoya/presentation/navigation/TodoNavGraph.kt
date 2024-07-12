@@ -10,7 +10,9 @@ import com.example.todoya.presentation.ui.HomeScreen
 import com.example.todoya.presentation.viewmodel.TodoViewModel
 
 
-
+/**
+ * Composable function representing the navigation host for the Todo application.
+ */
 @Composable
 fun TodoNavHost(
     navController: NavHostController,

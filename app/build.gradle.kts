@@ -21,6 +21,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        manifestPlaceholders["YANDEX_CLIENT_ID"] = "17ef137909c745f6ab3d1577533adb01"
     }
 
     buildTypes {
@@ -63,6 +64,8 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.firebase.crashlytics.buildtools)
+    implementation(libs.androidx.work.runtime.ktx)
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
 
@@ -85,7 +88,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.service)
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.lifecycle.reactivestreams.ktx)
-    testImplementation (libs.androidx.lifecycle.runtime.testing)
+    testImplementation(libs.androidx.lifecycle.runtime.testing)
 
     //Core
     testImplementation(libs.androidx.core.testing)
@@ -141,5 +144,10 @@ dependencies {
     implementation("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
+    implementation(libs.accompanist.swiperefresh)
+
+    implementation(libs.androidx.work.runtime.ktx.v271)
+
+    implementation(libs.authsdk)
 
 }
