@@ -1,18 +1,17 @@
-package com.example.todoya.presentation.viewmodel
+package com.example.todoya.feature.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoya.data.repository.TodoItemsRepositoryImpl
-import com.example.todoya.data.room.entity.TodoItem
-import com.example.todoya.domain.model.RepositoryException
-import com.example.todoya.domain.repository.TodoItemsRepository
-import com.example.todoya.presentation.ui.editTodoScreen.EditTodoUiState
+import com.example.feature.data.local.model.TodoItem
+import com.example.feature.data.repository.TodoItemsRepositoryImpl
+import com.example.todoya.presentation.editTodoScreen.EditTodoUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 class EditTodoViewModel @Inject constructor (
@@ -27,7 +26,7 @@ class EditTodoViewModel @Inject constructor (
             try {
                 val todoItem = repository.getTodoById(id)
                 _uiState.update { it.copy(selectedTodoItem = todoItem) }
-            } catch (e: RepositoryException) {
+            } catch (e: com.example.core.error.RepositoryException) {
                 _uiState.update { it.copy(errorCode = e.code) }
             }
         }
@@ -37,7 +36,7 @@ class EditTodoViewModel @Inject constructor (
         viewModelScope.launch {
             try {
                 repository.deleteTodoById(id)
-            } catch (e: RepositoryException) {
+            } catch (e: com.example.core.error.RepositoryException) {
                 _uiState.update { it.copy(errorCode = e.code) }
             }
         }
@@ -47,7 +46,7 @@ class EditTodoViewModel @Inject constructor (
         viewModelScope.launch {
             try {
                 repository.insert(todo)
-            } catch (e: RepositoryException) {
+            } catch (e: com.example.core.error.RepositoryException) {
                 _uiState.update { it.copy(errorCode = e.code) }
             }
         }
@@ -61,7 +60,7 @@ class EditTodoViewModel @Inject constructor (
         viewModelScope.launch {
             try {
                 repository.syncWithServer()
-            } catch (e: RepositoryException) {
+            } catch (e: com.example.core.error.RepositoryException) {
                 _uiState.update { it.copy(errorCode = e.code) }
             }
         }

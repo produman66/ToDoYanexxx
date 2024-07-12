@@ -1,13 +1,11 @@
-package com.example.todoya.presentation.viewmodel
+package com.example.todoya.feature.presentation.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoya.data.NetworkConnectivityObserver
-import com.example.todoya.data.repository.TodoItemsRepositoryImpl
-import com.example.todoya.data.room.entity.TodoItem
-import com.example.todoya.domain.model.RepositoryException
-import com.example.todoya.presentation.ui.homeScreen.HomeScreenUiState
+import com.example.feature.data.local.model.TodoItem
+import com.example.feature.data.repository.TodoItemsRepositoryImpl
+import com.example.todoya.presentation.homeScreen.HomeScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,7 +47,8 @@ class HomeViewModel @Inject constructor (
     }
 
     fun initializeConnectivityObserver(context: Context) {
-        val connectivityObserver = NetworkConnectivityObserver(context)
+        val connectivityObserver =
+            com.example.core.network_manager.NetworkConnectivityObserver(context)
         viewModelScope.launch {
             connectivityObserver.observe().collect { status ->
                 _uiState.update { it.copy(networkStatus = status) }
@@ -62,7 +61,7 @@ class HomeViewModel @Inject constructor (
             try {
                 repository.toggleCompletedById(id)
                 loadTasks()
-            } catch (e: RepositoryException) {
+            } catch (e: com.example.core.error.RepositoryException) {
                 _uiState.update { it.copy(errorCode = e.code) }
             }
         }
@@ -73,7 +72,7 @@ class HomeViewModel @Inject constructor (
             try {
                 repository.syncWithServer()
                 loadTasks()
-            } catch (e: RepositoryException) {
+            } catch (e: com.example.core.error.RepositoryException) {
                 _uiState.update { it.copy(errorCode = e.code) }
             }
         }

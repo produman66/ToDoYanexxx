@@ -1,15 +1,11 @@
 package com.example.todoya
 
 import android.app.Application
-import com.example.todoya.data.repository.TodoItemsRepositoryImpl
-import com.example.todoya.data.retrofit.RetrofitInstance
-import com.example.todoya.data.room.dao.TodoDao
-import com.example.todoya.data.room.db.TodoRoomDatabase
-import com.example.todoya.data.sp.AuthTokenManager
-import com.example.todoya.domain.manager.SyncManager
+import com.example.feature.data.auth.AuthTokenManager
+import com.example.feature.data.local.dao.TodoDao
+import com.example.feature.data.repository.TodoItemsRepositoryImpl
+import com.example.todoya.syncWork.SyncManager
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import javax.inject.Inject
 
 
