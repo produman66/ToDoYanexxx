@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.todoya.TodoApplication
-import com.example.core.error.RepositoryException
+import network.error.RepositoryException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,7 +32,7 @@ class SyncWorker(
         } catch (e: Exception) {
             Result.retry()
         } catch (e: IOException) {
-            throw com.example.core.error.RepositoryException(
+            throw RepositoryException(
                 6,
                 "Network error while fetching server revision"
             )

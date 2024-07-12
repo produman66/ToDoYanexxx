@@ -20,3 +20,4 @@ rootProject.name = "ToDoYa"
 include(":app")
 include(":feature")
 include(":core")
+include(":resources")

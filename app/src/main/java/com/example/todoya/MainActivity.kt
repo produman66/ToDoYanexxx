@@ -13,9 +13,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.todoya.navigation.TodoNavHost
-import com.example.todoya.ui.theme.TodoYaTheme
-import com.example.feature.data.auth.AuthManager
+import presentation.navigation.TodoNavHost
+import theme.TodoYaTheme
+import data.auth.AuthManager
 import com.yandex.authsdk.YandexAuthLoginOptions
 import com.yandex.authsdk.YandexAuthResult
 import com.yandex.authsdk.YandexAuthSdk
