@@ -1,8 +1,15 @@
-package ru.yandex.shmr24.plagins
+package com.example.todoya.plugins
 
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.internal.tasks.factory.dependsOn
+import com.example.todoya.tasks.CheckArtifactsTask
+import com.example.todoya.tasks.GenerateNameTask
+import com.example.todoya.tasks.PrintHelloTask
+import com.example.todoya.tasks.PrintUserNameTask
+import com.example.todoya.tasks.Repository
+import com.example.todoya.tasks.SayHelloUserTask
+import com.example.todoya.tasks.TaskWithDependencies
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -12,7 +19,6 @@ import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.register
-import ru.yandex.shmr24.tasks.*
 import java.io.File
 import javax.inject.Inject
 
@@ -24,10 +30,10 @@ class MyPlugin : Plugin<Project> {
 
         androidComponents.onVariants { variant ->
             println("Variant ${variant.name}")
-//            val artifacts = variant.artifacts.get(SingleArtifact.APK)
-//            project.tasks.register("checkDirFor${variant.name}", CheckArtifactsTask::class) {
-//                apkDir.set(artifacts)
-//            }
+            val artifacts = variant.artifacts.get(SingleArtifact.APK)
+            project.tasks.register("checkDirFor${variant.name}", CheckArtifactsTask::class) {
+                apkDir.set(artifacts)
+            }
         }
 
         val extension = project.extensions.create("myPlugin", MyPluginExtension::class)

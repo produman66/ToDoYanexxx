@@ -95,6 +95,4 @@ dependencies {
 
     implementation(libs.androidx.work.runtime.ktx.v271)
 
-    implementation(libs.authsdk)
-
 }

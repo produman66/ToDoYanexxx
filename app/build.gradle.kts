@@ -1,6 +1,28 @@
 plugins {
     id("android-app-convention")
+    id("my-plugin")
+    id("telegram-reporter")
+    id("validator")
 }
+validateApkSize {
+    size = 24 * 1024 * 1024
+    token.set("7127917239:AAFmoXLBHyRNo14myYxxEvUiB79vNyIdQQ8")
+    chatId.set("944658063")
+}
+
+tgReporter {
+    checkSize = false
+    token.set("7127917239:AAFmoXLBHyRNo14myYxxEvUiB79vNyIdQQ8")
+    chatId.set("944658063")
+}
+
+myPlugin {
+    myDeps {
+        enable.set(true)
+        prefix.set("PPPPP")
+    }
+}
+
 
 android {
     defaultConfig {

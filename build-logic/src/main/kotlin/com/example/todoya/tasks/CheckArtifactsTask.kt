@@ -1,4 +1,4 @@
-package ru.yandex.shmr24.tasks
+package com.example.todoya.tasks
 
 
 import org.gradle.api.DefaultTask

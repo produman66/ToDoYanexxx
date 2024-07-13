@@ -2,4 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+<!--    <application>-->
+<!--        <meta-data-->
+<!--            android:name="com.yandex.auth.CLIENT_ID"-->
+<!--            android:value="${YANDEX_CLIENT_ID}" />-->
+<!--    </application>-->
 </manifest>
