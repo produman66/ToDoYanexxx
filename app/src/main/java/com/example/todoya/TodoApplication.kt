@@ -4,7 +4,7 @@ import android.app.Application
 import data.auth.AuthTokenManager
 import data.local.dao.TodoDao
 import data.repository.TodoItemsRepositoryImpl
-import com.example.todoya.syncWork.SyncManager
+import com.example.todoya.syncWork.SyncManagerImpl
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -22,7 +22,7 @@ class TodoApplication : Application() {
     lateinit var authTokenManager: AuthTokenManager
 
     @Inject
-    lateinit var syncManager: SyncManager
+    lateinit var syncManager: SyncManagerImpl
 
     @Inject
     lateinit var repository: TodoItemsRepositoryImpl

@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.todoya.syncWork.SyncManager
 import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthSdk
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,14 +15,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Provides
-    @Singleton
-    fun provideSyncManager(
-        @ApplicationContext context: Context
-    ): SyncManager {
-        return SyncManager(context)
-    }
 
     @Provides
     @Singleton
