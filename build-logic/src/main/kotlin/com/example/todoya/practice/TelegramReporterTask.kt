@@ -34,6 +34,9 @@ abstract class TelegramReporterTask @Inject constructor(
     @get:Input
     abstract val versionCode: Property<String>
 
+    @get:Input
+    abstract val sendAdditionalFile: Property<Boolean>
+
 
     @TaskAction
     fun report() {
@@ -54,9 +57,11 @@ abstract class TelegramReporterTask @Inject constructor(
                     telegramApi.sendMessage("Build finished", token, chatId).apply {
                         println(bodyAsText())
                     }
-                    telegramApi.upload(reportFile, token = token, chatId = chatId).apply {
-                        println(bodyAsText())
-                        reportFile.delete()
+                    if (sendAdditionalFile.get()) {
+                        telegramApi.upload(reportFile, token = token, chatId = chatId).apply {
+                            println(bodyAsText())
+                            reportFile.delete()
+                        }
                     }
                     telegramApi.upload(renamedFile, renamedFile.length().toFileSize(), token, chatId).apply {
                         println("Status = $status")

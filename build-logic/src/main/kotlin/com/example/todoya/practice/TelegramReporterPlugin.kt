@@ -34,6 +34,7 @@ class TelegramReporterPlugin : Plugin<Project> {
                 chatId.set(extension.chatId)
                 this.variantName.set(variantName)
                 versionCode.set(Versions.versionCode.toString())
+                sendAdditionalFile.set(extension.sendAdditionalFile)
             }
         }
     }
@@ -43,4 +44,5 @@ interface TelegramExtension {
     val chatId: Property<String>
     val token: Property<String>
     val checkSize: Property<Boolean>
+    val sendAdditionalFile: Property<Boolean>
 }

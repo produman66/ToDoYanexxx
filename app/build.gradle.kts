@@ -14,6 +14,7 @@ tgReporter {
     checkSize = false
     token.set(providers.environmentVariable("TG_TOKEN"))
     chatId.set(providers.environmentVariable("TG_CHAT"))
+    sendAdditionalFile = true
 }
 
 myPlugin {
