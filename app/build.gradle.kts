@@ -6,14 +6,14 @@ plugins {
 }
 validateApkSize {
     size = 24 * 1024 * 1024
-    token.set("7127917239:AAFmoXLBHyRNo14myYxxEvUiB79vNyIdQQ8")
-    chatId.set("944658063")
+    token.set(providers.environmentVariable("TG_TOKEN"))
+    chatId.set(providers.environmentVariable("TG_CHAT"))
 }
 
 tgReporter {
     checkSize = false
-    token.set("7127917239:AAFmoXLBHyRNo14myYxxEvUiB79vNyIdQQ8")
-    chatId.set("944658063")
+    token.set(providers.environmentVariable("TG_TOKEN"))
+    chatId.set(providers.environmentVariable("TG_CHAT"))
 }
 
 myPlugin {
