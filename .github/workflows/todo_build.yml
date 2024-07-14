@@ -31,4 +31,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-release.apk
-          path: app/build/outputs/apk/debug/todolist-Debug-taskappreportTelegramApkForDebugpropertyversionCode.apk
+          path: app/build/outputs/apk/debug/todolist-Debug-1.apk
