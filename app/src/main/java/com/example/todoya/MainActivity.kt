@@ -7,47 +7,42 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.todoya.presentation.navigation.TodoNavHost
-import com.example.todoya.data.sp.AuthManager
-import com.example.todoya.presentation.viewmodel.TodoViewModel
-import com.example.todoya.presentation.viewmodel.TodoViewModelFactory
-import com.example.todoya.ui.theme.TodoYaTheme
+import presentation.navigation.TodoNavHost
+import theme.TodoYaTheme
+import data.auth.AuthManager
 import com.yandex.authsdk.YandexAuthLoginOptions
-import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthResult
 import com.yandex.authsdk.YandexAuthSdk
 import com.yandex.authsdk.YandexAuthToken
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 
 /**
  * MainActivity manages the main user interface of the application
  *  * and sets up navigation using Jetpack Compose.
  */
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val todoViewModel: TodoViewModel by viewModels {
-        TodoViewModelFactory((application as TodoApplication).repository)
-    }
+    @Inject
+    lateinit var sdk: YandexAuthSdk
 
-    private lateinit var sdk: YandexAuthSdk
-    private lateinit var authManager: AuthManager
+    @Inject
+    lateinit var authManager: AuthManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        authManager = AuthManager(this)
-        sdk = YandexAuthSdk.create(YandexAuthOptions(this))
 
         if (!authManager.isLoggedIn()) {
             startAuthFlow()
@@ -66,11 +61,12 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.primary
                 ) {
                     val navController: NavHostController = rememberNavController()
-                    TodoNavHost(todoViewModel = todoViewModel, navController = navController)
+                    TodoNavHost(navController = navController)
                 }
             }
         }
     }
+
 
 
     private fun startAuthFlow() {
