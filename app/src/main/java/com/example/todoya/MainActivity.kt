@@ -7,10 +7,19 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import presentation.navigation.TodoNavHost
@@ -23,8 +32,12 @@ import com.yandex.authsdk.YandexAuthToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import presentation.settingsScreen.SettingsRepository
+import presentation.settingsScreen.SettingsViewModel
+import presentation.settingsScreen.ThemeMode
 import javax.inject.Inject
 
 
@@ -41,6 +54,10 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var authManager: AuthManager
 
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,7 +72,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            TodoYaTheme {
+            val viewModel: SettingsViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsState()
+            TodoYaTheme(darkTheme = when (uiState.themeMode) {
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+            }) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.primary
@@ -120,4 +143,28 @@ class MainActivity : ComponentActivity() {
     private fun onCancelled() {
         Log.d("yan2", "onCancelled")
     }
+
+
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        themeJob.cancel()
+//    }
+//
+//
+//    private suspend fun applyThemeFromPreferences() {
+//        settingsRepository.themePreferenceFlow.collect { theme ->
+//            isDarkTheme = when (theme) {
+//                ThemeMode.LIGHT -> {
+//                    ThemeMode.LIGHT
+//                }
+//                ThemeMode.DARK -> {
+//                    ThemeMode.DARK
+//                }
+//                ThemeMode.SYSTEM -> {
+//                    ThemeMode.SYSTEM
+//                }
+//            }
+//        }
+//    }
+
 }

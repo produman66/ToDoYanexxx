@@ -14,9 +14,13 @@ interface TodoItemsRepository {
 
     val incompleteTodo: Flow<List<TodoItem>>
 
+    val undoTodo: Flow<List<TodoItem>>
+
     suspend fun insert(todo: TodoItem)
 
     suspend fun deleteTodoById(id: String)
+
+    suspend fun undoTodoById(id: String)
 
     suspend fun toggleCompletedById(id: String)
 

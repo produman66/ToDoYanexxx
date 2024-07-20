@@ -1,8 +1,15 @@
 package presentation.editTodoScreen
 
+import Utils
+import Utils.showErrorSnackbar
 import android.content.res.Configuration
+import android.util.Log
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,11 +20,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -26,6 +33,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -43,19 +52,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import Utils
-import Utils.showErrorSnackbar
 import com.example.feature.R
-import data.local.model.Importance
-import data.local.model.TodoItem
-import ui.CustomDivider
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import data.local.model.Importance
+import data.local.model.TodoItem
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import theme.TodoYaTheme
+import ui.CustomDivider
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
@@ -75,6 +83,7 @@ fun EditTodoScreen(
     onGetTodoById: (String) -> Unit,
     onInsertTodo: (TodoItem) -> Unit,
     onDeleteTodoById: (String) -> Unit,
+    onUndoTodoById: (String) -> Unit,
     onClearError: () -> Unit,
     onSyncWithServer: () -> Unit,
     navController: NavController,
@@ -91,19 +100,40 @@ fun EditTodoScreen(
     }
 
 
+    var highlight by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
     var isChecked by remember { mutableStateOf(uiState.selectedTodoItem?.deadline != null) }
     var deadlineIsSelected by remember { mutableStateOf(uiState.selectedTodoItem?.deadline != null) }
     var pickedDate by remember { mutableStateOf(uiState.selectedTodoItem?.deadline) }
     var selectedOption by remember { mutableStateOf("") }
 
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+
+    val backgroundColor by animateColorAsState(
+        if (highlight) MaterialTheme.colorScheme.error else  MaterialTheme.colorScheme.onPrimary,
+        animationSpec = tween(3000),
+        label = "color"
+    )
+
+
+    LaunchedEffect(selectedOption) {
+        if (selectedOption == "Высокий") {
+            highlight = true
+            delay(3000)
+            highlight = false
+        }
+    }
+
 
     uiState.errorCode?.let {
         LaunchedEffect(it) {
+            Log.d("Undotestinput", "errorCode")
             showErrorSnackbar(it, snackbarHostState, scope, onSyncWithServer)
             onClearError()
         }
     }
+
 
     LaunchedEffect(uiState.selectedTodoItem) {
         text = uiState.selectedTodoItem?.text ?: ""
@@ -184,43 +214,31 @@ fun EditTodoScreen(
                 Text(
                     text = selectedOption,
                     modifier = Modifier
-                        .clickable { expanded = true }
+                        .clickable { showBottomSheet = true }
                         .align(Alignment.CenterStart),
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.outlineVariant
+                    color = backgroundColor
                 )
 
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.align(Alignment.CenterStart)
-                ) {
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedOption = "Нет"
-                            expanded = false
+                if (showBottomSheet) {
+                    ModalBottomSheet(
+                        onDismissRequest = {
+                            showBottomSheet = false
                         },
-                        text = { Text(stringResource(id = R.string.NO)) }
-                    )
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedOption = "Низкий"
-                            expanded = false
-                        },
-                        text = { Text(stringResource(id = R.string.LOW)) }
-                    )
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedOption = "Высокий"
-                            expanded = false
-                        },
-                        text = {
-                            Text(
-                                stringResource(id = R.string.HIGH),
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    )
+                        sheetState = sheetState,
+                        scrimColor = Color(0x80000000).copy(alpha = 0.5f)
+                    ) {
+                        BottomSheetContent(
+                            onOptionSelected = { option ->
+                                selectedOption = option
+                                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                    if (!sheetState.isVisible) {
+                                        showBottomSheet = false
+                                    }
+                                }
+                            }
+                        )
+                    }
                 }
             }
 
@@ -283,7 +301,7 @@ fun EditTodoScreen(
 
             CustomDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-            DeleteButtonRow(itemId, onDeleteTodoById, navController)
+            DeleteButtonRow(itemId, onDeleteTodoById, onUndoTodoById = onUndoTodoById, navController)
         }
 
 
@@ -367,7 +385,8 @@ fun saveTodoItem(
                     modifiedAt = Date(System.currentTimeMillis()),
                     isSynced = false,
                     isModified = false,
-                    isDeleted = false
+                    isDeleted = false,
+                    isUndo = false
                 )
             )
         }
@@ -387,32 +406,35 @@ fun saveTodoItem(
 fun DeleteButtonRow(
     itemId: String,
     onDeleteTodoById: (String) -> Unit,
+    onUndoTodoById: (String) -> Unit,
     navController: NavController
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressedInteraction = remember { mutableStateOf(false) }
+
+    val pressedTintColor = MaterialTheme.colorScheme.outlineVariant
+    val normalTintColor = if (itemId.isNotBlank()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
+
     Row(
         modifier = Modifier
             .padding(16.dp)
-            .let {
-                if (itemId.isNotBlank()) {
-                    it.clickable {
-                        onDeleteTodoById(itemId)
-                        navController.popBackStack()
-                    }
-                } else {
-                    it
+            .clickable(
+                interactionSource = interactionSource,
+                indication = rememberRipple()
+            ) {
+                if (itemId.isNotBlank() && !pressedInteraction.value) {
+                    pressedInteraction.value = true
+                    onDeleteTodoById(itemId)
+                    onUndoTodoById(itemId)
+                    navController.popBackStack()
                 }
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val iconTintColor =
-            if (itemId.isNotBlank()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
-        val textColor =
-            if (itemId.isNotBlank()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
-
         Icon(
             painter = painterResource(id = R.drawable.delete),
             contentDescription = stringResource(id = R.string.delete),
-            tint = iconTintColor
+            tint = if (!pressedInteraction.value) normalTintColor else pressedTintColor
         )
 
         Text(
@@ -420,7 +442,7 @@ fun DeleteButtonRow(
             modifier = Modifier
                 .padding(horizontal = 16.dp),
             style = MaterialTheme.typography.titleMedium,
-            color = textColor
+            color = if (!pressedInteraction.value) normalTintColor else pressedTintColor
         )
     }
 }
@@ -445,7 +467,8 @@ fun EditTodoScreenPreviewLight() {
                 modifiedAt = Date(),
                 isSynced = false,
                 isModified = false,
-                isDeleted = false
+                isDeleted = false,
+                isUndo = false
             ),
             errorCode = null
         )
@@ -453,8 +476,9 @@ fun EditTodoScreenPreviewLight() {
         val fakeOnGetTodoById: (String) -> Unit = {}
         val fakeOnInsertTodo: (TodoItem) -> Unit = {}
         val fakeOnDeleteTodoById: (String) -> Unit = {}
+        val fakeOnUndoTodoById: (String) -> Unit = {}
         val fakeOnClearError: () -> Unit = {}
-        val fakeOnSyncWithServer: () -> Unit = {} // Добавляем фиктивную функцию для синхронизации
+        val fakeOnSyncWithServer: () -> Unit = {}
 
         val navController = rememberNavController()
 
@@ -463,8 +487,9 @@ fun EditTodoScreenPreviewLight() {
             onGetTodoById = fakeOnGetTodoById,
             onInsertTodo = fakeOnInsertTodo,
             onDeleteTodoById = fakeOnDeleteTodoById,
+            onUndoTodoById = fakeOnUndoTodoById,
             onClearError = fakeOnClearError,
-            onSyncWithServer = fakeOnSyncWithServer, // Передаем фиктивную функцию синхронизации
+            onSyncWithServer = fakeOnSyncWithServer,
             navController = navController,
             itemId = "1"
         )
@@ -486,7 +511,8 @@ fun EditTodoScreenPreviewDark() {
                 modifiedAt = Date(),
                 isSynced = false,
                 isModified = false,
-                isDeleted = false
+                isDeleted = false,
+                isUndo = false
             ),
             errorCode = null
         )
@@ -494,8 +520,9 @@ fun EditTodoScreenPreviewDark() {
         val fakeOnGetTodoById: (String) -> Unit = {}
         val fakeOnInsertTodo: (TodoItem) -> Unit = {}
         val fakeOnDeleteTodoById: (String) -> Unit = {}
+        val fakeOnUndoTodoById: (String) -> Unit = {}
         val fakeOnClearError: () -> Unit = {}
-        val fakeOnSyncWithServer: () -> Unit = {} // Добавляем фиктивную функцию для синхронизации
+        val fakeOnSyncWithServer: () -> Unit = {}
 
         val navController = rememberNavController()
 
@@ -504,6 +531,7 @@ fun EditTodoScreenPreviewDark() {
             onGetTodoById = fakeOnGetTodoById,
             onInsertTodo = fakeOnInsertTodo,
             onDeleteTodoById = fakeOnDeleteTodoById,
+            onUndoTodoById = fakeOnUndoTodoById,
             onClearError = fakeOnClearError,
             onSyncWithServer = fakeOnSyncWithServer,
             navController = navController,

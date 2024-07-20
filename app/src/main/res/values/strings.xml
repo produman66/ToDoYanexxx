@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ToDoYa</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-  <string name="my_todo">Мои дела</string>
+    <string name="my_todo">Мои дела</string>
     <string name="completed">Выполнено -</string>
     <string name="addButton">addButton</string>
     <string name="saveButton">СОХРАНИТЬ</string>
@@ -31,33 +31,30 @@
 
 
     <string-array name="importance_array">
-    <item>нет</item>
-    <item>Низкий</item>
-    <item>!!Высокий</item>
-  </string-array>
+        <item>нет</item>
+        <item>Низкий</item>
+        <item>!!Высокий</item>
+    </string-array>
 
 
-
-
-
-//Удалить потом
-  <string name="attention">Attention</string>
-  <string name="back_button">Back</string>
-  <string name="delete_question">Are you sure you want to delete?</string>
-  <string name="no_item_description">Нет элементов</string>
-  <string name="edit_item_title">Edit Item</string>
-  <string name="item">Item</string>
-  <string name="item_detail_title">Item Details</string>
-  <string name="item_entry_title">Add Item</string>
-  <string name="item_name_req">Item Name*</string>
-  <string name="item_price_req">Item Price*</string>
-  <string name="no">No</string>
-  <string name="price">Price</string>
-  <string name="quantity_in_stock">Quantity in stock</string>
-  <string name="quantity_req">Quantity in Stock*</string>
-  <string name="save_action">Save</string>
-  <string name="sell">Sell</string>
-  <string name="yes">Yes</string>
-  <string name="required_fields">Заполните текст</string>
+    //Удалить потом
+    <string name="attention">Attention</string>
+    <string name="back_button">Back</string>
+    <string name="delete_question">Are you sure you want to delete?</string>
+    <string name="no_item_description">Нет элементов</string>
+    <string name="edit_item_title">Edit Item</string>
+    <string name="item">Item</string>
+    <string name="item_detail_title">Item Details</string>
+    <string name="item_entry_title">Add Item</string>
+    <string name="item_name_req">Item Name*</string>
+    <string name="item_price_req">Item Price*</string>
+    <string name="no">No</string>
+    <string name="price">Price</string>
+    <string name="quantity_in_stock">Quantity in stock</string>
+    <string name="quantity_req">Quantity in Stock*</string>
+    <string name="save_action">Save</string>
+    <string name="sell">Sell</string>
+    <string name="yes">Yes</string>
+    <string name="required_fields">Заполните текст</string>
 
 </resources>

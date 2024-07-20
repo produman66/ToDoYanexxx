@@ -1,9 +1,12 @@
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import data.local.model.Importance
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import network.observer.ConnectivityObserver
+import presentation.homeScreen.HomeScreenUiState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -47,11 +50,17 @@ object Utils {
         }
     }
 
+
+
+
+
+
+
     fun getNetworkStatusMessage(
-        networkStatus: ConnectivityObserver.Status,
+        uiState: HomeScreenUiState,
         onSyncWithServer: () -> Unit
     ): String {
-        return when (networkStatus) {
+        return when (uiState.networkStatus) {
             ConnectivityObserver.Status.Available -> {
                 onSyncWithServer()
                 "Данные синхронизируются с сервером"

@@ -21,7 +21,8 @@ data class TodoItem(
     val modifiedAt: Date? = null,
     val isSynced: Boolean,
     val isModified: Boolean,
-    val isDeleted: Boolean
+    val isDeleted: Boolean,
+    val isUndo: Boolean
 )
 
 

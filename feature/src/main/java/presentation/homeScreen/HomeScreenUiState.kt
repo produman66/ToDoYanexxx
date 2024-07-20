@@ -7,6 +7,7 @@ import data.local.model.TodoItem
 
 data class HomeScreenUiState(
     val curItemsList: List<TodoItem> = emptyList(),
+    val undoList: TodoItem? = null,
     val countCompletedTodo: Int = 0,
     val isEyeClosed: Boolean = false,
     val networkStatus: ConnectivityObserver.Status = ConnectivityObserver.Status.Unavailable,

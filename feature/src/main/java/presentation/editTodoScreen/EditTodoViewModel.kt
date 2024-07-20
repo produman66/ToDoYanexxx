@@ -42,6 +42,17 @@ class EditTodoViewModel @Inject constructor (
         }
     }
 
+
+    fun undoTodoById(id: String) {
+        viewModelScope.launch {
+            try {
+                repository.undoTodoById(id)
+            } catch (e: RepositoryException) {
+                _uiState.update { it.copy(errorCode = e.code) }
+            }
+        }
+    }
+
     fun insert(todo: TodoItem) {
         viewModelScope.launch {
             try {

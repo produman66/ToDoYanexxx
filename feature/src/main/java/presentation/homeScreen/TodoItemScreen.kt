@@ -168,7 +168,8 @@ val exampleTodoItem = TodoItem(
     modifiedAt = null,
     isSynced = false,
     isModified = false,
-    isDeleted = false
+    isDeleted = false,
+    isUndo = false
 )
 
 

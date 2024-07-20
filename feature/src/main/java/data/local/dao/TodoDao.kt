@@ -45,13 +45,19 @@ interface TodoDao {
     @Query("SELECT * FROM todo_items WHERE isDeleted = 1")
     fun getDeletedTodos(): List<TodoItem>
 
+    @Query("SELECT * FROM todo_items WHERE isUndo = 1")
+    fun getUndoTodos(): Flow<List<TodoItem>>
+
 
     @Query("UPDATE todo_items SET isSynced = 1 WHERE id = :id")
     suspend fun markTodoAsSynced(id: String)
 
 
-    @Query("UPDATE todo_items SET isDeleted = 1 WHERE id = :id")
+    @Query("UPDATE todo_items SET isDeleted = NOT isDeleted WHERE id = :id")
     suspend fun markTodoAsDeleted(id: String)
+
+    @Query("UPDATE todo_items SET isUndo = NOT isUndo WHERE id = :id")
+    suspend fun markTodoAsUndo(id: String)
 
 
     @Query("UPDATE todo_items SET isModified = 1 WHERE id = :id")

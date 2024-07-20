@@ -3,6 +3,7 @@ plugins {
     id("my-plugin")
     id("telegram-reporter")
     id("validator")
+    alias(libs.plugins.jetbrains.kotlin.android)
 }
 validateApkSize {
     size = 24 * 1024 * 1024
@@ -40,6 +41,8 @@ dependencies {
 
     implementation(project(":core"))
     implementation(project(":feature"))
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
 
     //Compose
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -73,4 +76,5 @@ dependencies {
     // Coroutines
     api(libs.kotlinx.coroutines.core)
     api(libs.kotlinx.coroutines.android)
+
 }
