@@ -1,0 +1,357 @@
+{
+  "templates": {
+    "card": {
+      "type": "container",
+      "background": [
+        {
+          "type": "solid",
+          "color": "@{theme == 'light' ? '#F7F6F2' : '#161618'}"
+        }
+      ],
+      "height": {
+        "type": "match_parent"
+      },
+      "width": {
+        "type": "match_parent"
+      },
+      "items": [
+        {
+          "type": "container",
+          "orientation": "horizontal",
+          "height": {
+            "type": "fixed",
+            "value": 76,
+            "unit": "dp"
+          },
+          "width": {
+            "type": "match_parent"
+          },
+          "paddings": {
+            "bottom": 16,
+            "top": 36,
+            "left": 16
+          },
+          "background": [
+            {
+              "type": "solid",
+              "color": "@{theme == 'light' ? '#F7F6F2' : '#161618'}"
+            }
+          ],
+          "border": {
+            "corner_radius": 0,
+            "shadow": {
+              "offset": {
+                "x": {
+                  "value": 1
+                },
+                "y": {
+                  "value": 4
+                }
+              },
+              "color": "#000"
+            },
+            "has_shadow": true
+          },
+          "items": [
+            {
+              "type": "image",
+              "image_url": "https://github.com/produman66/MovieFindefAPD/blob/master/closee.svg?raw=true",
+              "tint_color": "@{theme == 'light' ? '#000000' : '#ffffff'}",
+              "preview" : "@{theme == 'light' ? 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE4Ljk4NDQgNi40MjE4OEwxMy40MDYyIDEyTDE4Ljk4NDQgMTcuNTc4MUwxNy41NzgxIDE4Ljk4NDRMMTIgMTMuNDA2Mkw2LjQyMTg4IDE4Ljk4NDRMNS4wMTU2MiAxNy41NzgxTDEwLjU5MzggMTJMNS4wMTU2MiA2LjQyMTg4TDYuNDIxODggNS4wMTU2MkwxMiAxMC41OTM4TDE3LjU3ODEgNS4wMTU2MkwxOC45ODQ0IDYuNDIxODhaIiBmaWxsPSJibGFjayIvPgo8L3N2Zz4K' : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE4Ljk4NDQgNi40MjE4OEwxMy40MDYyIDEyTDE4Ljk4NDQgMTcuNTc4MUwxNy41NzgxIDE4Ljk4NDRMMTIgMTMuNDA2Mkw2LjQyMTg4IDE4Ljk4NDRMNS4wMTU2MiAxNy41NzgxTDEwLjU5MzggMTJMNS4wMTU2MiA2LjQyMTg4TDYuNDIxODggNS4wMTU2MkwxMiAxMC41OTM4TDE3LjU3ODEgNS4wMTU2MkwxOC45ODQ0IDYuNDIxODhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K'}",
+              "tint_mode": "multiply",
+              "width": {
+                "type": "fixed",
+                "value": 25,
+                "unit": "dp"
+              },
+              "actions": [
+                {
+                  "log_id": "go_back_log_id",
+                  "url":  "sample-action://back"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "container",
+          "orientation": "vertical",
+          "height": {
+            "type": "wrap_content"
+          },
+          "width": {
+            "type": "match_parent"
+          },
+
+          "items": [
+            {
+              "type": "image",
+              "$image_url": "post_image",
+              "aspect": {
+                "ratio": 1
+              },
+              "content_alignment_vertical": "top",
+              "extensions": [
+                {
+                  "id": "pinch-to-zoom"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "container",
+          "orientation": "vertical",
+          "height": {
+            "type": "match_parent"
+          },
+          "width": {
+            "type": "match_parent"
+          },
+          "margins": {
+            "left": 16,
+            "right": 16,
+            "top": 16,
+            "bottom": 16
+          },
+          "content_alignment_horizontal": "center",
+          "items": [
+            {
+              "type": "text",
+              "$text": "title",
+              "font_weight": "bold",
+              "font_size": 30,
+              "text_color": "@{theme == 'light' ? '#000000' : '#ffffff'}",
+              "width": {
+                "type": "wrap_content"
+              },
+              "height": {
+                "type": "wrap_content"
+              },
+              "margins": {
+                "bottom": 16
+              }
+            },
+            {
+              "type": "text",
+              "text": "@{text0}",
+              "font_size": 26,
+              "text_color": "@{theme == 'light' ? '#000000' : '#ffffff'}",
+              "margins": {
+                "bottom": 8
+              }
+            },
+            {
+              "type": "container",
+              "orientation": "vertical",
+              "height": {
+                "type": "match_parent"
+              },
+              "width": {
+                "type": "match_parent"
+              },
+              "items": []
+            },
+            {
+              "type": "container",
+              "orientation": "horizontal",
+              "gravity": "bottom",
+              "width": {
+                "type": "match_parent"
+              },
+              "items": [
+                {
+                  "type": "container",
+                  "orientation": "vertical",
+                  "content_alignment_horizontal": "center",
+                  "margins": {
+                    "bottom": 16
+                  },
+                  "width": {
+                    "type": "match_parent"
+                  },
+                  "alignment": "center",
+                  "items": [
+                    {
+                      "type": "state",
+                      "$id": "state_likes_id",
+                      "width": {
+                        "type": "wrap_content"
+                      },
+                      "height": {
+                        "type": "wrap_content"
+                      },
+                      "states": [
+                        {
+                          "state_id": "title1",
+                          "div": {
+                            "type": "image",
+                            "image_url": "https://github.com/produman66/MovieFindefAPD/blob/master/arrow_forward.svg?raw=true",
+                            "preview" : "@{theme == 'light' ? 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDMuOTg0MzhMMjAuMDE1NiAxMkwxMiAyMC4wMTU2TDEwLjU5MzggMTguNjA5NEwxNi4xNzE5IDEyLjk4NDRIMy45ODQzOFYxMS4wMTU2SDE2LjE3MTlMMTAuNTkzOCA1LjM5MDYyTDEyIDMuOTg0MzhaIiBmaWxsPSJibGFjayIvPgo8L3N2Zz4K' : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTkgMC45ODQzNzVMMTcuMDE1NiA5TDkgMTcuMDE1Nkw3LjU5Mzc1IDE1LjYwOTRMMTMuMTcxOSA5Ljk4NDM4SDAuOTg0Mzc1VjguMDE1NjJIMTMuMTcxOUw3LjU5Mzc1IDIuMzkwNjJMOSAwLjk4NDM3NVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo='}",
+                            "tint_color": "@{theme == 'light' ? '#000000' : '#ffffff'}",
+                            "tint_mode": "multiply",
+                            "width": {
+                              "type": "fixed",
+                              "value": 25,
+                              "unit": "dp"
+                            },
+                            "actions": [
+                              {
+                                "$log_id": "add_like_log_id",
+                                "$url": "add_like_url"
+                              },
+                              {
+                                "$log_id": "set_liked_log_id",
+                                "$url": "set_liked_url"
+                              },
+                              {
+                                "$log_id": "set_text1_log_id",
+                                "$url": "set_text1_url"
+                              },
+                              {
+                                "$log_id": "set_image1_log_id",
+                                "$url": "set_image1_url"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "state_id": "liked",
+                          "div": {
+                            "type": "image",
+                            "image_url": "https://github.com/produman66/MovieFindefAPD/blob/master/arrow_back.svg?raw=true",
+                            "preview" : "@{theme == 'light' ? 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIwLjAxNTYgMTEuMDE1NlYxMi45ODQ0SDEzLjkyMTlINy44MjgxMkwxMy40MDYyIDE4LjYwOTRMMTIgMjAuMDE1NkwzLjk4NDM4IDEyTDEyIDMuOTg0MzhMMTMuNDA2MiA1LjM5MDYyTDcuODI4MTIgMTEuMDE1NkgyMC4wMTU2WiIgZmlsbD0iYmxhY2siLz4KPC9zdmc+Cg==' : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAxNTYgOC4wMTU2MlY5Ljk4NDM4SDEwLjkyMTlINC44MjgxMkwxMC40MDYyIDE1LjYwOTRMOSAxNy4wMTU2TDAuOTg0Mzc1IDlMOSAwLjk4NDM3NUwxMC40MDYyIDIuMzkwNjJMNC44MjgxMiA4LjAxNTYySDE3LjAxNTZaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K'}",
+                            "width": {
+                              "type": "fixed",
+                              "value": 25,
+                              "unit": "dp"
+                            },
+                            "tint_color": "@{theme == 'light' ? '#000000' : '#ffffff'}",
+                            "tint_mode": "multiply",
+                            "actions": [
+                              {
+                                "$log_id": "remove_like_log_id",
+                                "$url": "remove_like_url"
+                              },
+                              {
+                                "$log_id": "set_title1_log_id",
+                                "$url": "set_title1_url"
+                              },
+                              {
+                                "$log_id": "set_text2_log_id",
+                                "$url": "set_text2_url"
+                              },
+                              {
+                                "$log_id": "set_image2_log_id",
+                                "$url": "set_image2_url"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "card": {
+    "variables": [
+      {
+        "name": "color.background",
+        "type": "color",
+        "value": "#06041F"
+      },
+      {
+        "name": "card0.likes",
+        "type": "string",
+        "value": "Добро пожаловать"
+      },
+      {
+        "name": "card1.likes",
+        "type": "string",
+        "value": "Добро пожаловать"
+      },
+      {
+        "name": "card2.likes",
+        "type": "string",
+        "value": "Приоритет"
+      },
+      {
+        "name": "text0",
+        "type": "string",
+        "value": "ToDoYa - ваш новый помощник для управления задачами и временем. С ToDoYa вы сможете организовать свои задачи. Мы рады помочь вам стать продуктивнее!"
+      },
+      {
+        "name": "text1",
+        "type": "string",
+        "value": "ToDoYa - ваш новый помощник для управления задачами и временем. С ToDoYa вы сможете организовать свои задачи. Мы рады помочь вам стать продуктивнее!"
+      },
+      {
+        "name": "text2",
+        "type": "string",
+        "value": "Вы можете выставлять дедлайн задачи и помечать их по приоритетам, чтобы всегда знать, что важно!"
+      },
+      {
+        "name": "image0",
+        "type": "string",
+        "value": "https://github.com/produman66/MovieFindefAPD/blob/master/calendarf.svg?raw=true"
+      },
+      {
+        "name": "image1",
+        "type": "string",
+        "value": "https://github.com/produman66/MovieFindefAPD/blob/master/calendarf.svg?raw=true"
+      },
+      {
+        "name": "image2",
+        "type": "string",
+        "value": "https://github.com/produman66/MovieFindefAPD/blob/master/graphf.svg?raw=true"
+      },
+      {
+        "name": "theme",
+        "type": "string",
+        "value": "light"
+      }
+    ],
+    "log_id": "divgram",
+    "states": [
+      {
+        "state_id": 0,
+        "div": {
+          "type": "card",
+          "title": "@{card0.likes}",
+          "post_image": "@{image0}",
+          "author": "@{card2.like}",
+          "author_prefix_end": 3,
+          "state_likes_id": "card0.likes",
+          "visibility_actions": [
+            {
+              "log_id": "card_visible",
+              "url": "div-action://timer?id=like_timer&action=start"
+            }
+          ],
+          "add_like_log_id": "card0.add_like",
+          "add_like_url": "div-action://set_variable?name=card0.likes&value=@{card2.likes}",
+          "set_liked_log_id": "card0.set_liked",
+          "set_liked_url": "div-action://set_state?state_id=0/card0.likes/liked",
+          "set_text1_log_id": "card0.set_text1",
+          "set_text1_url": "div-action://set_variable?name=text0&value=@{text2}",
+          "set_image1_log_id": "card0.set_image1",
+          "set_image1_url": "div-action://set_variable?name=image0&value=@{image2}",
+          "remove_like_log_id": "card0.remove_like",
+          "remove_like_url": "div-action://set_variable?name=card0.likes&value=@{card1.likes}",
+          "set_title1_log_id": "card0.set_title1",
+          "set_title1_url": "div-action://set_state?state_id=0/card0.likes/title1",
+          "set_text2_log_id": "card0.set_text2",
+          "set_text2_url": "div-action://set_variable?name=text0&value=@{text1}",
+          "set_image2_log_id": "card0.set_image2",
+          "set_image2_url": "div-action://set_variable?name=image0&value=@{image1}"
+        }
+      }
+    ]
+  }
+}
