@@ -8,6 +8,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +48,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -128,7 +135,6 @@ fun EditTodoScreen(
 
     uiState.errorCode?.let {
         LaunchedEffect(it) {
-            Log.d("Undotestinput", "errorCode")
             showErrorSnackbar(it, snackbarHostState, scope, onSyncWithServer)
             onClearError()
         }
@@ -215,7 +221,11 @@ fun EditTodoScreen(
                     text = selectedOption,
                     modifier = Modifier
                         .clickable { showBottomSheet = true }
-                        .align(Alignment.CenterStart),
+                        .align(Alignment.CenterStart)
+                        .semantics {
+                            role = Role.Button
+                            contentDescription = "Кнопка"
+                        },
                     style = MaterialTheme.typography.titleMedium,
                     color = backgroundColor
                 )
@@ -226,7 +236,12 @@ fun EditTodoScreen(
                             showBottomSheet = false
                         },
                         sheetState = sheetState,
-                        scrimColor = Color(0x80000000).copy(alpha = 0.5f)
+                        scrimColor = Color(0x80000000).copy(alpha = 0.5f),
+                        modifier = Modifier.semantics {
+                            role = Role.DropdownList
+                            contentDescription = "Кнопка"
+
+                        }
                     ) {
                         BottomSheetContent(
                             onOptionSelected = { option ->
@@ -269,6 +284,9 @@ fun EditTodoScreen(
                                 .padding(start = 16.dp)
                                 .clickable {
                                     dateDialogState.show()
+                                }.semantics {
+                                    role = Role.Button
+                                    contentDescription = "Кнопка"
                                 }
                         )
                     }
@@ -276,7 +294,11 @@ fun EditTodoScreen(
 
                 }
                 Switch(
-                    modifier = Modifier.padding(end = 16.dp),
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .semantics {
+                            role = Role.Switch
+                        },
                     checked = isChecked,
                     onCheckedChange = {
                         isChecked = !isChecked
@@ -428,7 +450,9 @@ fun DeleteButtonRow(
                     onUndoTodoById(itemId)
                     navController.popBackStack()
                 }
-            },
+            }.semantics {
+            contentDescription = if (itemId.isNotBlank() && !pressedInteraction.value) "Активна" else "Неактивна"
+        }.focusable(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

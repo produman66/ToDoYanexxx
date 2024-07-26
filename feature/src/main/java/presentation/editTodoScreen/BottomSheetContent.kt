@@ -10,6 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ui.CustomDivider
@@ -39,7 +42,10 @@ fun BottomSheetContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onOptionSelected("Нет") }
-                .padding(8.dp),
+                .padding(8.dp)
+                .semantics {
+                    role = Role.Button
+                },
             textAlign = TextAlign.Center
         )
 
@@ -51,7 +57,10 @@ fun BottomSheetContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onOptionSelected("Низкий") }
-                .padding(8.dp),
+                .padding(8.dp)
+                .semantics {
+                    role = Role.Button
+                },
             textAlign = TextAlign.Center
         )
 
@@ -64,7 +73,10 @@ fun BottomSheetContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onOptionSelected("Высокий") }
-                .padding(8.dp),
+                .padding(8.dp)
+                .semantics {
+                    role = Role.Button
+                },
             textAlign = TextAlign.Center
         )
     }

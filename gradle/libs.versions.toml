@@ -6,11 +6,14 @@ appcompat = "1.7.0"
 authsdk = "3.1.0"
 constraintlayout = "2.1.4"
 converterGson = "2.11.0"
+core = "1.6.1"
 coreTesting = "2.2.0"
+coreVersion = "1.5.0"
 datastorePreferences = "1.1.1"
 datetime = "0.8.1-rc"
 desugar_jdk_libs = "2.0.4"
 div = "30.9.0"
+espressoCoreVersion = "3.6.1"
 fragmentKtx = "1.8.1"
 googleHiltAndroid = "2.51.1"
 gradle = "7.0.4"
@@ -43,6 +46,10 @@ activityCompose = "1.9.0"
 composeBom = "2024.04.01"
 loggingInterceptor = "4.9.3"
 material = "1.12.0"
+mockitoCore = "4.8.0"
+mockitoInline = "4.0.0"
+mockitoKotlin = "4.1.0"
+mockk = "1.13.4"
 navigationFragmentKtx = "2.7.7"
 okhttp = "4.12.0"
 picasso = "2.8.0"
@@ -63,9 +70,12 @@ accompanist-navigation-animation = { module = "com.google.accompanist:accompanis
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefresh" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+androidx-core = { module = "androidx.test:core", version.ref = "core" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
+androidx-core-v150 = { module = "androidx.test:core", version.ref = "coreVersion" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-espresso-core-v361 = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-lifecycle-viewmodel = { module = "androidx.hilt:hilt-lifecycle-viewmodel", version.ref = "hiltLifecycleViewmodel" }
@@ -87,6 +97,7 @@ androidx-room-common = { module = "androidx.room:room-common", version.ref = "ro
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCommon" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomCommon" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "roomCommon" }
+androidx-rules = { module = "androidx.test:rules", version.ref = "coreVersion" }
 androidx-ui-desktop = { module = "androidx.compose.ui:ui-desktop", version.ref = "uiDesktop" }
 androidx-work-runtime-ktx-v271 = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtxVersion" }
 authsdk = { module = "com.yandex.android:authsdk", version.ref = "authsdk" }
@@ -139,6 +150,10 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
