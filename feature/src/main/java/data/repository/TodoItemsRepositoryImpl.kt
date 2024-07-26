@@ -1,5 +1,6 @@
 package data.repository
 
+import android.util.Log
 import data.TaskConverter
 import data.local.dao.TodoDao
 import data.local.model.TodoItem
@@ -30,9 +31,14 @@ class TodoItemsRepositoryImpl(
     override val allTodo: Flow<List<TodoItem>>
         get() = todoDao.getAllTodo()
 
+    override val undoTodo: Flow<List<TodoItem>>
+        get() = todoDao.getUndoTodos()
+
 
     override val incompleteTodo: Flow<List<TodoItem>>
         get() = allTodo.map { todoList -> todoList.filter { !it.isCompleted } }
+
+
 
 
     override suspend fun getTodoById(id: String): TodoItem? = todoDao.getTodoById(id)
@@ -59,10 +65,26 @@ class TodoItemsRepositoryImpl(
         withContext(Dispatchers.IO) {
             try {
                 todoDao.markTodoAsDeleted(id)
+                Log.d("uuuuuuuuuu", "rep : delete")
             } catch (e: Exception) {
                 throw RepositoryException(
                     2,
                     "Error deleting todo item with id $id: ${e.message}"
+                )
+            }
+        }
+    }
+
+
+    override suspend fun undoTodoById(id: String) {
+        withContext(Dispatchers.IO) {
+            try {
+                todoDao.markTodoAsUndo(id)
+                Log.d("uuuuuuuuuu", "rep : undo")
+            } catch (e: Exception) {
+                throw RepositoryException(
+                    2,
+                    "Error undo todo item with id $id: ${e.message}"
                 )
             }
         }
@@ -84,6 +106,7 @@ class TodoItemsRepositoryImpl(
 
     override suspend fun syncWithServer() {
         withContext(Dispatchers.IO) {
+            Log.d("uuuuuuuuuu", "rep : sync")
             try {
                 syncUnsyncedTodos()
                 syncDeletedTodos()
@@ -151,6 +174,7 @@ class TodoItemsRepositoryImpl(
 
     private suspend fun syncDeletedTodos() {
         val deletedTodos = todoDao.getDeletedTodos()
+        Log.d("uuuuuuuuuu", "rep : sync : del : ${deletedTodos}")
         deletedTodos.forEach { todo ->
             try {
                 val revision = getServerRevision()

@@ -112,4 +112,8 @@ dependencies {
     implementation(libs.accompanist.swiperefresh)
 
     implementation(libs.androidx.work.runtime.ktx.v271)
+
+
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.accompanist.navigation.animation)
 }

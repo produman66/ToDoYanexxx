@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,7 +40,9 @@ fun TodoTopBar(
     isCollapsed: Boolean,
     isEyeClosed: Boolean,
     countCompletedTodo: Int,
-    onEyeToggle: () -> Unit
+    onEyeToggle: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onInfoClick: () -> Unit
 ) {
     val elevation = if (isCollapsed) 8.dp else 0.dp
 
@@ -78,6 +82,22 @@ fun TodoTopBar(
             ),
             actions = {
                 if (scrollBehavior.state.collapsedFraction > 0.8) {
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.settings),
+                            contentDescription = stringResource(id = R.string.settings),
+                            tint = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+
+                    IconButton(onClick = onInfoClick) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.assignment),
+                            contentDescription = stringResource(id = R.string.info),
+                            tint = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+
                     Image(
                         painter = painterResource(
                             if (isEyeClosed) R.drawable.visibility_off

@@ -1,6 +1,11 @@
 package presentation.homeScreen
 
+
+import Utils.getNetworkStatusMessage
+import Utils.showErrorSnackbar
 import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,15 +22,19 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -37,17 +46,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import network.observer.ConnectivityObserver
-import Utils.getNetworkStatusMessage
-import Utils.showErrorSnackbar
 import com.example.feature.R
-import data.local.model.Importance
-import data.local.model.TodoItem
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
+import data.local.model.Importance
+import data.local.model.TodoItem
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import network.observer.ConnectivityObserver
 import presentation.navigation.MainDestinations
-import java.util.Date
 import theme.TodoYaTheme
+import java.util.Date
 
 
 /**
@@ -62,7 +71,11 @@ fun HomeScreen(
     onClearError: () -> Unit,
     onInitializeConnectivityObserver: (Context) -> Unit,
     onToggleEyeClosed: () -> Unit,
-    onSyncWithServer: () -> Unit
+    onSyncWithServer: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onInfoClick: () -> Unit,
+    onDeleteTodoById: (String) -> Unit,
+    onUndoTodoById: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -71,26 +84,47 @@ fun HomeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val swipeRefreshState = remember { SwipeRefreshState(false) }
 
+    LaunchedEffect(uiState.undoList) {
+        if (uiState.undoList != null){
+            val result = snackbarHostState.showSnackbar(
+                message = "Удалить ${uiState.undoList.text}",
+                actionLabel = "Отмена",
+                duration = SnackbarDuration.Indefinite
+            )
+            when (result) {
+                SnackbarResult.Dismissed -> {
+                    onUndoTodoById(uiState.undoList.id)
+                }
+
+                SnackbarResult.ActionPerformed -> {
+                    onUndoTodoById(uiState.undoList.id)
+                    onDeleteTodoById(uiState.undoList.id)
+                }
+            }
+        }
+    }
+
     uiState.errorCode?.let { error ->
         LaunchedEffect(error) {
-            showErrorSnackbar(error, snackbarHostState, scope, onSyncWithServer)
-            onClearError()
+                showErrorSnackbar(error, snackbarHostState, scope, onSyncWithServer)
+                onClearError()
         }
     }
 
     LaunchedEffect(Unit) {
-        onInitializeConnectivityObserver(context)
+            onInitializeConnectivityObserver(context)
     }
 
     LaunchedEffect(uiState.networkStatus) {
-        val message = getNetworkStatusMessage(uiState.networkStatus, onSyncWithServer)
-        snackbarHostState.showSnackbar(message)
+            delay(5000)
+            val message = getNetworkStatusMessage(uiState, onSyncWithServer)
+            snackbarHostState.showSnackbar(message)
     }
 
 
     LaunchedEffect(swipeRefreshState.isRefreshing) {
         if (swipeRefreshState.isRefreshing) {
-            val message = getNetworkStatusMessage(uiState.networkStatus, onSyncWithServer)
+            val message = getNetworkStatusMessage(uiState, onSyncWithServer)
             snackbarHostState.showSnackbar(message)
             swipeRefreshState.isRefreshing = false
         }
@@ -98,7 +132,11 @@ fun HomeScreen(
 
     Scaffold(
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(
+                hostState = snackbarHostState,
+            ) { data ->
+                CountdownSnackbar(data)
+            }
         },
 
         modifier = Modifier
@@ -110,7 +148,9 @@ fun HomeScreen(
                 isCollapsed = scrollBehavior.state.collapsedFraction == 1f,
                 isEyeClosed = uiState.isEyeClosed,
                 countCompletedTodo = uiState.countCompletedTodo,
-                onEyeToggle = onToggleEyeClosed
+                onEyeToggle = onToggleEyeClosed,
+                onSettingsClick = onSettingsClick,
+                onInfoClick = onInfoClick
             )
         },
         floatingActionButton = {
@@ -188,7 +228,8 @@ fun HomeScreenPreviewLight() {
             modifiedAt = null,
             isSynced = false,
             isModified = false,
-            isDeleted = false
+            isDeleted = false,
+            isUndo = false
         ),
         TodoItem(
             id = "3",
@@ -200,7 +241,8 @@ fun HomeScreenPreviewLight() {
             modifiedAt = null,
             isSynced = false,
             isModified = true,
-            isDeleted = false
+            isDeleted = false,
+            isUndo = false
         ),
         TodoItem(
             id = "4",
@@ -212,7 +254,8 @@ fun HomeScreenPreviewLight() {
             modifiedAt = null,
             isSynced = false,
             isModified = false,
-            isDeleted = false
+            isDeleted = false,
+            isUndo = false
         )
     )
 
@@ -235,7 +278,11 @@ fun HomeScreenPreviewLight() {
                 onClearError = {},
                 onInitializeConnectivityObserver = {},
                 onToggleEyeClosed = {},
-                onSyncWithServer = {}
+                onSyncWithServer = {},
+                onSettingsClick = {},
+                onInfoClick = {},
+                onDeleteTodoById = {},
+                onUndoTodoById = {},
             )
         }
     }
@@ -259,7 +306,8 @@ fun HomeScreenPreviewDark() {
             modifiedAt = null,
             isSynced = false,
             isModified = false,
-            isDeleted = false
+            isDeleted = false,
+            isUndo = false
         ),
         TodoItem(
             id = "3",
@@ -271,7 +319,8 @@ fun HomeScreenPreviewDark() {
             modifiedAt = null,
             isSynced = false,
             isModified = true,
-            isDeleted = false
+            isDeleted = false,
+            isUndo = false
         ),
         TodoItem(
             id = "4",
@@ -283,7 +332,8 @@ fun HomeScreenPreviewDark() {
             modifiedAt = null,
             isSynced = false,
             isModified = false,
-            isDeleted = false
+            isDeleted = false,
+            isUndo = false
         )
     )
 
@@ -306,7 +356,11 @@ fun HomeScreenPreviewDark() {
                 onClearError = {},
                 onInitializeConnectivityObserver = {},
                 onToggleEyeClosed = {},
-                onSyncWithServer = {}
+                onSyncWithServer = {},
+                onSettingsClick = {},
+                onInfoClick = {},
+                onDeleteTodoById = {},
+                onUndoTodoById = {},
             )
         }
     }

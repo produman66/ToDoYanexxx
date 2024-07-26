@@ -34,7 +34,7 @@ abstract class TodoRoomDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     TodoRoomDatabase::class.java,
-                    "todo_database67"
+                    "todo_database73"
                 )
                     .build()
                 INSTANCE = instance

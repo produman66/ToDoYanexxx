@@ -1,11 +1,12 @@
 package com.example.todoya
 
 import android.app.Application
+import com.example.todoya.syncWork.SyncManagerImpl
+import dagger.hilt.android.HiltAndroidApp
 import data.auth.AuthTokenManager
 import data.local.dao.TodoDao
 import data.repository.TodoItemsRepositoryImpl
-import com.example.todoya.syncWork.SyncManagerImpl
-import dagger.hilt.android.HiltAndroidApp
+import presentation.settingsScreen.SettingsRepository
 import javax.inject.Inject
 
 
@@ -26,6 +27,10 @@ class TodoApplication : Application() {
 
     @Inject
     lateinit var repository: TodoItemsRepositoryImpl
+
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
+
 
     fun updateAuthToken(token: String){
         authTokenManager.saveAuthToken(token)

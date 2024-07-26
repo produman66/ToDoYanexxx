@@ -26,7 +26,8 @@ object TaskConverter {
             modifiedAt = if (task.changed_at != 0) Date(task.changed_at.toLong() * 1000) else null,
             isSynced = true,
             isModified = true,
-            isDeleted = false
+            isDeleted = false,
+            isUndo = false
         )
     }
 
