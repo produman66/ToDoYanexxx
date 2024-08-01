@@ -25,6 +25,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.feature.R
@@ -59,7 +65,12 @@ fun TodoTopBar(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(start = 48.dp)
+                        modifier = Modifier
+                            .padding(start = 48.dp)
+                            .semantics {
+                                contentDescription = "Мои дела"
+                            },
+
                     )
                 } else {
                     Text(
@@ -67,7 +78,11 @@ fun TodoTopBar(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(start = 16.dp)
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .semantics {
+                                contentDescription = "Мои дела"
+                            },
                     )
                 }
             },
@@ -82,11 +97,13 @@ fun TodoTopBar(
             ),
             actions = {
                 if (scrollBehavior.state.collapsedFraction > 0.8) {
-                    IconButton(onClick = onSettingsClick) {
+                    IconButton(
+                        onClick = onSettingsClick
+                    ) {
                         Icon(
                             painter = painterResource(id = R.drawable.settings),
                             contentDescription = stringResource(id = R.string.settings),
-                            tint = MaterialTheme.colorScheme.tertiary
+                            tint = MaterialTheme.colorScheme.tertiary,
                         )
                     }
 
@@ -94,10 +111,10 @@ fun TodoTopBar(
                         Icon(
                             painter = painterResource(id = R.drawable.assignment),
                             contentDescription = stringResource(id = R.string.info),
-                            tint = MaterialTheme.colorScheme.tertiary
+                            tint = MaterialTheme.colorScheme.tertiary,
                         )
-                    }
 
+                    }
                     Image(
                         painter = painterResource(
                             if (isEyeClosed) R.drawable.visibility_off
@@ -131,7 +148,10 @@ fun TodoTopBar(
                         end = 24.dp,
                         bottom = 10.dp
                     )
-                    .background(MaterialTheme.colorScheme.primary),
+                    .background(MaterialTheme.colorScheme.primary)
+                    .semantics {
+                        liveRegion = LiveRegionMode.Polite
+                    },
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
@@ -139,6 +159,7 @@ fun TodoTopBar(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.outlineVariant,
                 )
+
                 Image(
                     painter = painterResource(
                         if (isEyeClosed) R.drawable.visibility_off
@@ -150,7 +171,10 @@ fun TodoTopBar(
                     modifier = Modifier
                         .clickable {
                             onEyeToggle()
+                        }.semantics {
+                            role = Role.Button
                         },
+
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.tertiary)
                 )
             }

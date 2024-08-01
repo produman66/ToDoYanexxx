@@ -28,6 +28,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import Utils
+import androidx.compose.foundation.focusable
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import com.example.feature.R
 import data.local.model.Importance
 import data.local.model.TodoItem
@@ -44,7 +49,6 @@ fun TodoItemScreen(
     onCheckedChange: (Boolean) -> Unit,
     onItemClick: () -> Unit
 ) {
-
     var isChecked by remember { mutableStateOf(item.isCompleted) }
 
     DisposableEffect(item.isCompleted) {
@@ -57,6 +61,12 @@ fun TodoItemScreen(
             .fillMaxWidth()
             .clickable { onItemClick() }
             .background(MaterialTheme.colorScheme.secondary)
+            .semantics {
+                contentDescription = "Задача: ${item.text}. " +
+                        (if (item.deadline != null) "Срок: ${Utils.formatDate(item.deadline)}. " else "") +
+                        (if (isChecked) "Выполнено." else "Не выполнено.")
+                role = Role.Button
+            }.focusable()
     ) {
         Checkbox(
             checked = isChecked,
@@ -65,7 +75,12 @@ fun TodoItemScreen(
                 onCheckedChange(it)
             },
             modifier = Modifier
-                .padding(start = 8.dp, top = 12.dp, bottom = 12.dp),
+                .padding(start = 8.dp, top = 12.dp, bottom = 12.dp)
+                .semantics {
+                    contentDescription = "Отметить выполненным." +
+                            (if (isChecked) "Состояние: выполнено." else "Состояние: не выполнено.")
+                    role = Role.Checkbox
+                }.focusable(),
             colors = CheckboxDefaults.colors(
                 checkedColor = MaterialTheme.colorScheme.scrim,
                 uncheckedColor =
@@ -90,13 +105,19 @@ fun TodoItemScreen(
                 if (item.importance == Importance.LOW) {
                     Image(
                         painter = painterResource(id = R.drawable.arrow_down),
-                        contentDescription = stringResource(id = R.string.importance),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outlineVariant)
+                        contentDescription = stringResource(id = R.string.importance_low),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outlineVariant),
+                        modifier = Modifier.semantics {
+                            contentDescription = "Низкая важность"
+                        }
                     )
                 } else if (item.importance == Importance.HIGH) {
                     Image(
                         painter = painterResource(id = R.drawable.importance_high),
                         contentDescription = stringResource(id = R.string.importance),
+                        modifier = Modifier.semantics {
+                            contentDescription = "Высокая важность"
+                        }
                     )
                 }
                 Text(
@@ -105,28 +126,37 @@ fun TodoItemScreen(
                     style = MaterialTheme.typography.titleMedium,
                     color = if (isChecked) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.onPrimary,
                     textDecoration = if (isChecked) TextDecoration.LineThrough else TextDecoration.None,
+                    modifier = Modifier.semantics {
+                        contentDescription = item.text
+                    } .focusable()
                 )
             }
             if (item.deadline != null) {
                 Text(
                     text = item.deadline.let { Utils.formatDate(it) },
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.outlineVariant
-
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    modifier = Modifier.semantics {
+                        contentDescription = "Срок: ${Utils.formatDate(item.deadline)}"
+                    } .focusable()
                 )
             }
         }
 
         Image(
             painter = painterResource(id = R.drawable.info_outline),
-            contentDescription = "Todo Icon",
+            contentDescription = "Информация о задаче",
             modifier = Modifier
                 .padding(top = 26.dp, end = 16.dp)
-                .size(24.dp),
-
-            )
+                .size(24.dp)
+                .semantics {
+                    role = Role.Button
+                }
+                .focusable()
+        )
     }
 }
+
 
 
 /**
@@ -142,6 +172,10 @@ fun TodoNew(
             .fillMaxWidth()
             .clickable { onItemClick() }
             .background(MaterialTheme.colorScheme.secondary)
+            .semantics {
+                contentDescription = "Добавить задачу"
+                role = Role.Button
+            }
     ) {
         Text(
             text = stringResource(R.string.new_todo),

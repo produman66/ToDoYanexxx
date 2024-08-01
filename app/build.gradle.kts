@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
 }
 validateApkSize {
+
     size = 24 * 1024 * 1024
     token.set(providers.environmentVariable("TG_TOKEN"))
     chatId.set(providers.environmentVariable("TG_CHAT"))

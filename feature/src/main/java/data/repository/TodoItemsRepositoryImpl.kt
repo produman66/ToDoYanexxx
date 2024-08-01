@@ -106,7 +106,6 @@ class TodoItemsRepositoryImpl(
 
     override suspend fun syncWithServer() {
         withContext(Dispatchers.IO) {
-            Log.d("uuuuuuuuuu", "rep : sync")
             try {
                 syncUnsyncedTodos()
                 syncDeletedTodos()
@@ -174,7 +173,6 @@ class TodoItemsRepositoryImpl(
 
     private suspend fun syncDeletedTodos() {
         val deletedTodos = todoDao.getDeletedTodos()
-        Log.d("uuuuuuuuuu", "rep : sync : del : ${deletedTodos}")
         deletedTodos.forEach { todo ->
             try {
                 val revision = getServerRevision()
