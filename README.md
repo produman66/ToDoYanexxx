@@ -1,1 +1,109 @@
 
+# Todo-лист 
+
+Автор: [Безруков Владимир](https://drive.google.com/file/d/1A99tjowbGJ3MW2limVrFLC3IuJALrQjB/view)
+
+
+# Содержание
+
+1. [Описание](#описание)
+2. [Скриншоты](#скриншоты)
+3. [Стек технологий](#стек-технологий)
+4. [Статус выполнения задач](#статус-выполнения-задач)
+5. [Загрузка](#загрузка)
+
+# Описание
+
+Jetpack Compose: Полная миграция UI на Jetpack Compose, включая экран создания и редактирования задач. Кастомные компоненты, с поддержкой дневной/ночной темы через AppTheme. Созданы @Preview для экрана и компонентов с различными темами. Реализованы анимации.
+
+Многопоточность: Вся бизнес-логика приложения вынесена в корутины, включая работу с базой данных и сетевые запросы. Приложение обрабатывает фоновую работу, включая отмену задач при выходе с экрана, и продумана обработка ошибок в background потоках.
+
+Корутинные Flow: Реализован подход с использованием Flow для получения данных и работы с потоками.
+
+Сетевые запросы и авторизация:
+- Добавлена авторизация с использованием токенов через Interceptor.
+- Реализованы сетевые запросы для получения, добавления, изменения и удаления задач с сервера.
+- Обработка ошибок с поддержкой ретрая запросов и кеширования данных. Автоматическая синхронизация при восстановлении соединения.
+
+Архитектура: 
+- Применение архитектуры MVVM с разделением приложения на слои: данные, репозиторий и UI.
+- Внедрение паттерна репозиториев для скрытия источников данных (сеть и база данных).
+
+Dependency Injection: Внедрен Hilt для статического DI
+
+Многомодульность: Приложение разбито на несколько модулей, с настройкой межмодульного DI через Component Dependencies.
+
+Хранение данных: Реализована локальная база данных через Room, поддержка оффлайн-режима. Приложение продолжает работать без интернета с последующей синхронизацией данных при восстановлении соединения.
+
+CI/CD и сборка:
+- Вынесена конфигурация сборки в convention плагины Gradle.
+- Реализованы задачи сборки APK с проверкой его размера и автоматической выгрузкой в Telegram.
+- Настроен Github Actions для CI, с автоматической сборкой и выгрузкой APK на каждый pull request.
+
+UI/UX и Accessibility: Поддержана доступность для пользователей с TalkBack и масштабированием шрифта. Реализованы анимации, кастомные стили кнопок и эффекты нажатия.
+
+Автотесты: Написаны unit и UI тесты с использованием Mockito и Espresso. Применены тестовые фреймворки для тестирования основных пользовательских сценариев и обеспечения стабильности приложения.
+
+
+# Скриншоты
+
+## Экран Авторизации
+
+<img src="https://github.com/produman66/ToDoYanexxx/assets/115027939/a6f04420-6bad-429a-b264-bce3f8cdbc21" width="200" height="450"/>
+<img src="https://github.com/produman66/ToDoYanexxx/assets/115027939/f961e5f4-2321-4d45-b4f0-b214ba14161f" width="200" height="450"/>
+
+## Экран «Home»
+
+<img src="https://github.com/user-attachments/assets/2eb939e9-2c85-4e46-95ca-240be162063a" width="200" height="450"/>
+<img src="https://github.com/user-attachments/assets/75b8879c-7c84-40e7-9a2d-6e03df0363a2" width="200" height="450"/>
+<img src="https://github.com/user-attachments/assets/16ddb572-e9e3-499d-a0e6-96bcd8e34f27" width="200" height="450"/>
+<img src="https://github.com/user-attachments/assets/f8867c76-4bb7-439c-b48f-0004b650a984" width="200" height="450"/>
+<img src="https://github.com/user-attachments/assets/1c846e92-17c9-415f-84f2-f8e9243e351c" width="200" height="450"/>
+<img src="https://github.com/produman66/ToDoYanexxx/assets/115027939/28506d8c-3007-4b53-9f16-88678bb71189" width="200" height="450"/>
+<img src="https://github.com/produman66/ToDoYanexxx/assets/115027939/79dc41e4-d53a-4822-acce-3ad9ba7e4a04" width="200" height="450"/>
+<img src="https://github.com/produman66/ToDoYanexxx/assets/115027939/3284e1b0-76be-404c-9c1e-8798797397d7" width="200" height="450"/>
+
+## Экран «Todo»
+
+<img src="https://github.com/user-attachments/assets/8482cce6-3f25-487d-baab-2a79949356ae" width="200" height="450"/>
+<img src="https://github.com/user-attachments/assets/033101ee-1bc0-4546-91ca-612c7d6bdd3b" width="200" height="450"/>
+
+## Экран «Theme»
+<a name="Экран «Theme»"></a> 
+
+<img src="https://github.com/user-attachments/assets/b0118e4f-430d-48b6-84be-96a2f9d214ef" width="200" height="450"/>
+<img src="https://github.com/user-attachments/assets/0c0c10c8-76d2-4c94-842d-fc58cc1466fe" width="200" height="450"/>
+
+## Экран «Info»
+
+<img src="https://github.com/user-attachments/assets/68dd6911-7249-43b3-978f-9d5f6ffa62a1" width="200" height="450"/>
+<img src="https://github.com/user-attachments/assets/60e856fd-4031-449e-91b0-fb5c06ae063f" width="200" height="450"/>
+<img src="https://github.com/user-attachments/assets/5aa12ea5-306b-492e-b9fe-c4e048d3d5db" width="200" height="450"/>
+<img src="https://github.com/user-attachments/assets/a3ad07dc-b8eb-4305-95b6-8f57a2c2ac92" width="200" height="450"/>
+
+
+# Стек технологий
+- Kotlin
+- Jetpack Compose
+- Jetpack Navigation
+- Coroutines + Flow
+- Retrofit
+- Gson
+- Room
+- Hilt
+- DivKit (BDUI)
+- Accessibility
+- MVVM + Repository
+- Clean Architecture
+- Многомодульность
+- Junit
+- Авторизация: Яндекс Паспорт
+
+# Загрузка
+
+## Скриншоты
+
+Скачать [.apk](https://github.com/produman66/VKApp/releases/tag/FirstRelease) файл на андроид устройство
+
+
+
