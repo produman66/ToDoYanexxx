@@ -3,7 +3,6 @@
 
 Автор: [Безруков Владимир](https://drive.google.com/file/d/1A99tjowbGJ3MW2limVrFLC3IuJALrQjB/view)
 
-
 # Содержание
 
 1. [Описание](#описание)
