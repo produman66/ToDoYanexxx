@@ -1,7 +1,6 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 
-
 pluginManagement {
     includeBuild("build-logic")
     repositories {
@@ -21,3 +20,5 @@ include(":app")
 include(":feature")
 include(":core")
 include(":resources")
+
+
