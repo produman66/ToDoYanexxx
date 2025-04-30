@@ -26,6 +26,7 @@ val LightColorPalette = lightColorScheme(
     primary = LightColorPrimary,
     secondary = LightColorSecondary,
 
+
     tertiary = Blue,
     error = Red,
     scrim = Green,

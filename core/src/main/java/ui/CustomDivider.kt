@@ -11,6 +11,7 @@ import theme.TodoYaTheme
 
 
 /**
+ *
  * Composable function that draws a custom horizontal divider.
  */
 @Composable

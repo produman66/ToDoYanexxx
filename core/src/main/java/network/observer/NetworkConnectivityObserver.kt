@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
  * a Flow of connectivity status updates.
  * This class implements the ConnectivityObserver interface.
  */
+
 class NetworkConnectivityObserver(
     val context: Context
 ): ConnectivityObserver {
